@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Etudiant {
+  id           String        @id @default(cuid())
+  nom          String
+  prenom       String
+  email        String        @unique
+  mdp          String
+  cv           Bytes
+  competences  String
+  candidatures Candidature[]
+}
+
+model Candidature {
+  id               String            @id @default(cuid())
+  date             DateTime
+  statut           CandidatureStatut
+  lettreMotivation String
+  cv               Bytes
+  etudiantId       String
+  stageId          String
+
+  etudiant Etudiant @relation(fields: [etudiantId], references: [id])
+  stage    Stage    @relation(fields: [stageId], references: [id])
+}
+
+model Stage {
+  id           String      @id @default(cuid())
+  titre        String
+  description  String
+  competences  String
+  duree        String
+  dateDebut    DateTime
+  dateFin      DateTime
+  lieu         String
+  statut       StageStatut
+  entrepriseId String
+
+  entreprise   Entreprise    @relation(fields: [entrepriseId], references: [id])
+  candidatures Candidature[]
+
+  evaluation EvaluationStage?
+}
+
+model EvaluationStage {
+  id          String   @id @default(cuid())
+  note        Int
+  commentaire String
+  date        DateTime
+
+  stageId String @unique
+  stage   Stage  @relation(fields: [stageId], references: [id])
+}
+
+model Entreprise {
+  id      String @id @default(cuid())
+  nom     String
+  adresse String
+  email   String @unique
+  mdp     String
+
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  contactId String   @unique
+
+  stages   Stage[]
+  secteurs SecteurEntreprise[]
+}
+
+model Contact {
+  id     String @id @default(cuid())
+  nom    String
+  prenom String
+  email  String
+
+  entreprise Entreprise?
+}
+
+model Secteur {
+  id          String              @id @default(cuid())
+  valeur      String
+  label       String
+  entreprises SecteurEntreprise[]
+}
+
+model SecteurEntreprise {
+  idSecteur    String
+  idEntreprise String
+
+  secteur    Secteur    @relation(fields: [idSecteur], references: [id])
+  entreprise Entreprise @relation(fields: [idEntreprise], references: [id])
+
+  @@id([idSecteur, idEntreprise])
+}
+
+model Admin {
+  id    String @id @default(cuid())
+  email String @unique
+  mdp   String
+}
+
+enum StageStatut {
+  Disponible
+  Pourvue
+  Expirée
+}
+
+enum CandidatureStatut {
+  EnAttente
+  Acceptée
+  Refusée
+}

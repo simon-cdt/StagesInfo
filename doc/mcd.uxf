@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>1080</x><y>420</y><w>120</w><h>180</h></coordinates><panel_attributes>Stage
+<diagram program="umletino" version="15.1"><zoom_level>12</zoom_level><element><id>UMLClass</id><coordinates><x>1344</x><y>516</y><w>144</w><h>216</h></coordinates><panel_attributes>Stage
 --
 *id*
 titre
@@ -9,7 +9,7 @@ dateDebut
 dateFin
 lieu
 secteur
-statut</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>510</x><y>430</y><w>110</w><h>150</h></coordinates><panel_attributes>Utilisateur
+statut</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>660</x><y>528</y><w>132</w><h>180</h></coordinates><panel_attributes>Utilisateur
 --
 *id*
 nom
@@ -18,44 +18,62 @@ email
 mdp
 cv
 competences
-role</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1090</x><y>710</y><w>110</w><h>120</h></coordinates><panel_attributes>Entreprise
+role</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1356</x><y>864</y><w>132</w><h>144</h></coordinates><panel_attributes>Entreprise
 --
 *id*
 nom
 adresse
 email
 mdp
-contact</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>810</x><y>450</y><w>100</w><h>110</h></coordinates><panel_attributes>Candidature
+contact</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1020</x><y>552</y><w>120</w><h>132</h></coordinates><panel_attributes>Candidature
 -
 *id*
 date
 statut
 lettreMotivation
-cv</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>810</x><y>610</y><w>100</w><h>90</h></coordinates><panel_attributes>EvaluationStage
+cv</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1020</x><y>744</y><w>120</w><h>108</h></coordinates><panel_attributes>EvaluationStage
 -
 *id*
 note
 commentaire
-date</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>610</x><y>490</y><w>220</w><h>50</h></coordinates><panel_attributes>lt=-
+date</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>780</x><y>600</y><w>264</w><h>60</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=*
-POSTULER &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>800</x><y>750</y><w>100</w><h>80</h></coordinates><panel_attributes>Secteur
+POSTULER &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1008</x><y>912</y><w>120</w><h>96</h></coordinates><panel_attributes>Secteur
 -
 *id*
 valeur
-label</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>900</x><y>490</y><w>200</w><h>50</h></coordinates><panel_attributes>lt=-
+label</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1128</x><y>600</y><w>240</w><h>60</h></coordinates><panel_attributes>lt=-
 m1=*
 m2=1
-POSSEDER &gt;</panel_attributes><additional_attributes>10;20;180;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1150</x><y>590</y><w>80</w><h>140</h></coordinates><panel_attributes>lt=-
+POSSEDER &gt;</panel_attributes><additional_attributes>10;20;180;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1428</x><y>720</y><w>96</w><h>168</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=*
-&lt; OFFRIR</panel_attributes><additional_attributes>10;120;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>890</x><y>760</y><w>220</w><h>50</h></coordinates><panel_attributes>lt=-
+&lt; OFFRIR</panel_attributes><additional_attributes>10;120;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1116</x><y>924</y><w>264</w><h>60</h></coordinates><panel_attributes>lt=-
 m1=*
 m2=*
-&lt; POSSEDER</panel_attributes><additional_attributes>200;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>900</x><y>590</y><w>210</w><h>110</h></coordinates><panel_attributes>lt=-
+&lt; POSSEDER</panel_attributes><additional_attributes>200;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1128</x><y>720</y><w>252</w><h>132</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=1
-&lt; NOTER</panel_attributes><additional_attributes>180;10;180;80;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>990</x><y>770</y><w>30</w><h>130</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>930</x><y>880</y><w>140</w><h>60</h></coordinates><panel_attributes>SecteurEntreprise
+&lt; NOTER</panel_attributes><additional_attributes>180;10;180;80;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>1236</x><y>936</y><w>36</w><h>156</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1164</x><y>1068</y><w>168</w><h>72</h></coordinates><panel_attributes>SecteurEntreprise
 --
 *idSecteur*
-*idEntreprise*</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+*idEntreprise*</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1020</x><y>396</y><w>120</w><h>96</h></coordinates><panel_attributes>Secteur
+-
+*id*
+valeur
+label</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1128</x><y>420</y><w>324</w><h>120</h></coordinates><panel_attributes>lt=-
+m1=*
+m2=*
+&lt; POSSEDER</panel_attributes><additional_attributes>240;80;240;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1176</x><y>240</y><w>168</w><h>72</h></coordinates><panel_attributes>SecteurEntreprise
+--
+*idSecteur*
+*idEntreprise*</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1248</x><y>300</y><w>36</w><h>168</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;120;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1692</x><y>576</y><w>132</w><h>108</h></coordinates><panel_attributes>Contact
+--
+*id*
+nom
+prenom
+email</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1476</x><y>612</y><w>240</w><h>60</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+POSSEDER &gt;</panel_attributes><additional_attributes>10;20;180;20</additional_attributes></element></diagram>
