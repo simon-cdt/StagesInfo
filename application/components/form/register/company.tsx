@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FormField } from "../FormItem";
+import { FormField } from "../FormField";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { FetchSecteursList } from "@/types/types";
@@ -29,7 +29,7 @@ function useSecteurs() {
   return useQuery({
     queryKey: ["secteurs"],
     queryFn: async (): Promise<FetchSecteursList> => {
-      const response = await fetch(`/api/secteur`);
+      const response = await fetch(`/api/secteurs`);
       return await response.json();
     },
   });

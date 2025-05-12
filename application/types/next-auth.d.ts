@@ -1,35 +1,16 @@
-// eslint-disable-next-line
-import NextAuth, { DefaultSession, DefaultUser, DefaultJWT } from "next-auth";
+import NextAuth from "next-auth";
+import { Role } from "./types";
 
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      role: "admin" | "etudiant" | "entreprise";
-      nom?: string;
-      prenom?: string;
-      adresse?: string;
-    } & DefaultSession["user"];
-  }
-
   interface User {
     id: string;
-    email: string;
-    role: "admin" | "etudiant" | "entreprise";
-    nom?: string;
-    prenom?: string;
-    adresse?: string;
+    role: Role;
   }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT extends Record<string, unknown> {
-    id: string;
-    email: string;
-    role: "admin" | "etudiant" | "entreprise";
-    nom?: string;
-    prenom?: string;
-    adresse?: string;
+  interface Session {
+    user: User & { id: string; role: Role };
+    token: {
+      id: string;
+      role: Role;
+    };
   }
 }

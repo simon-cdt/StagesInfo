@@ -21,8 +21,8 @@ model Etudiant {
 model Candidature {
   id               String            @id @default(cuid())
   date             DateTime
-  statut           CandidatureStatut
-  lettreMotivation String
+  statut           CandidatureStatut @default(EnAttente)
+  lettreMotivation Bytes
   cv               Bytes
   etudiantId       String
   stageId          String
@@ -40,9 +40,11 @@ model Stage {
   dateDebut    DateTime
   dateFin      DateTime
   lieu         String
-  statut       StageStatut
+  statut       StageStatut @default(Disponible)
   entrepriseId String
+  secteurId    String
 
+  secteur      Secteur       @relation(fields: [secteurId], references: [id])
   entreprise   Entreprise    @relation(fields: [entrepriseId], references: [id])
   candidatures Candidature[]
 
@@ -84,9 +86,10 @@ model Contact {
 
 model Secteur {
   id          String              @id @default(cuid())
-  valeur      String
   label       String
+  couleur     String
   entreprises SecteurEntreprise[]
+  Stage       Stage[]
 }
 
 model SecteurEntreprise {

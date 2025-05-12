@@ -15,10 +15,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Loader2, Mail } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import PasswordField from "@/components/form/PasswordField";
+import { FormField } from "@/components/form/FormField";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -58,10 +59,10 @@ export default function LoginPage() {
     }
   };
   return (
-    <main className="w-full flex justify-center pt-20">
-      <div className="w-[40%] flex flex-col items-center gap-10">
-        <div className="text-center flex flex-col gap-2">
-          <h1 className="text-3xl font-bold mb-2">Connexion</h1>
+    <main className="flex w-full justify-center pt-20">
+      <div className="flex w-[40%] flex-col items-center gap-10">
+        <div className="flex flex-col gap-2 text-center">
+          <h1 className="mb-2 text-3xl font-bold">Connexion</h1>
           <p className="text-muted-foreground">
             Connectez-vous pour accéder à votre espace personnel
           </p>
@@ -79,41 +80,29 @@ export default function LoginPage() {
               className="flex flex-col gap-4"
             >
               <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="email">E-mail</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-[10px] h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      placeholder="exemple@mail.com"
-                      className="pl-9"
-                      {...register("email")}
+                <FormField
+                  label="E-mail"
+                  name="email"
+                  type="email"
+                  placeholder="exemple@mail.com"
+                  register={register}
+                  error={errors.email}
+                  icon={
+                    <Image
+                      src={"/icon/mail.svg"}
+                      alt="Icon"
+                      width={700}
+                      height={700}
+                      className="w-4"
                     />
-                  </div>
-                  {errors.email && (
-                    <small className="font-medium text-red-500">
-                      {errors.email.message}
-                    </small>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="mdp">Mot de passe</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-[10px] h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="mdp"
-                      placeholder="********"
-                      type="password"
-                      className="pl-9"
-                      {...register("mdp")}
-                    />
-                  </div>
-                  {errors.mdp && (
-                    <small className="font-medium text-red-500">
-                      {errors.mdp.message}
-                    </small>
-                  )}
-                </div>
+                  }
+                />
+                <PasswordField
+                  id="mdp"
+                  register={register}
+                  label="Mot de passe"
+                  errorsForm={errors.mdp?.message}
+                />
                 <Button
                   type="submit"
                   className="pointer w-full"

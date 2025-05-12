@@ -25,7 +25,7 @@ export default function Navbar() {
               />
             </Link>
           </div>
-          <div className="flex w-[40%] justify-evenly">
+          <div className="flex w-[40%] items-center justify-evenly">
             <Link href={"/"} className="text-xl font-bold">
               Rechercher des stages
             </Link>
@@ -45,7 +45,18 @@ export default function Navbar() {
               )
             )}
           </div>
-          <div className="flex w-[30%] justify-center">
+          <div className="flex w-[30%] justify-center gap-7">
+            <Link href={"/account"}>
+              <Button size={"icon"} variant={"ghost"}>
+                <Image
+                  src={"/icon/user.svg"}
+                  alt="Icon"
+                  width={700}
+                  height={700}
+                  className="w-7"
+                />
+              </Button>
+            </Link>
             <Button
               onClick={async () => {
                 await signOut({ redirect: false });

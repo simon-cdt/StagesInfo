@@ -17,7 +17,12 @@ export default function LayoutWrapper({
   const queryClient = new QueryClient();
   const pathname = usePathname();
 
-  const pathnameAuth = ["/login", "/register"];
+  const pathnameAuth = [
+    "/login",
+    "/register",
+    "/register/student",
+    "/register/company",
+  ];
 
   if (pathnameAuth.includes(pathname)) {
     return (

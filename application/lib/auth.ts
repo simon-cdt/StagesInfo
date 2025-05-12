@@ -11,93 +11,86 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/sign-in",
+    signIn: "/login",
   },
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "email", placeholder: "john@mail.com" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials ?? {};
-        if (!email || !password) return null;
-
-        // Check in Admin
-        const admin = await db.admin.findUnique({ where: { email } });
-        if (admin) {
-          const validPassword = await argon2.verify(admin.mdp, password);
-          if (!validPassword) {
-            throw new Error("Le mot de passe est incorrect.");
-          } else {
-            return {
-              id: admin.id,
-              email: admin.email,
-              role: "admin",
-            };
-          }
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("L'email et le mot de passe sont requis");
         }
 
-        // Check in Etudiant
-        const etudiant = await db.etudiant.findUnique({ where: { email } });
+        const etudiant = await db.etudiant.findUnique({
+          where: { email: credentials?.email },
+        });
         if (etudiant) {
-          const validPassword = await argon2.verify(etudiant.mdp, password);
-          if (!validPassword) {
-            throw new Error("Le mot de passe est incorrect.");
-          } else {
+          if (await argon2.verify(etudiant.mdp, credentials.password)) {
             return {
               id: etudiant.id,
-              email: etudiant.email,
               role: "etudiant",
-              nom: etudiant.nom,
-              prenom: etudiant.prenom,
             };
+          } else {
+            throw new Error("Mot de passe incorrect");
           }
         }
 
-        // Check in Entreprise
-        const entreprise = await db.entreprise.findUnique({ where: { email } });
+        const entreprise = await db.entreprise.findUnique({
+          where: { email: credentials?.email },
+        });
         if (entreprise) {
-          const validPassword = await argon2.verify(entreprise.mdp, password);
-          if (!validPassword) {
-            throw new Error("Le mot de passe est incorrect.");
-          } else {
+          if (await argon2.verify(entreprise.mdp, credentials.password)) {
             return {
               id: entreprise.id,
-              email: entreprise.email,
               role: "entreprise",
-              nom: entreprise.nom,
-              adresse: entreprise.adresse,
             };
+          } else {
+            throw new Error("Mot de passe incorrect");
           }
         }
 
-        throw new Error("L'email ne correspond à aucun utilisateur.");
+        const admin = await db.admin.findUnique({
+          where: { email: credentials?.email },
+        });
+        if (admin) {
+          if (await argon2.verify(admin.mdp, credentials.password)) {
+            return {
+              id: admin.id,
+              role: "admin",
+            };
+          } else {
+            throw new Error("Mot de passe incorrect");
+          }
+        }
+
+        throw new Error("Aucun utilisateur trouvé avec cet email");
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.role = user.role;
-        token.nom = user.nom;
-        token.prenom = user.prenom;
-        token.adresse = user.adresse;
+        return {
+          ...token,
+          id: user.id,
+          role: user.role,
+        };
       }
       return token;
     },
-
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email;
-      session.user.role = token.role;
-      session.user.nom = token.nom;
-      session.user.prenom = token.prenom;
-      session.user.adresse = token.adresse;
-      return session;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+        },
+      };
     },
   },
 };

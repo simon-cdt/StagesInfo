@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FormField } from "../FormItem";
+import { FormField } from "../FormField";
 import Image from "next/image";
 
 export default function StudentRegisterForm({
@@ -89,7 +89,7 @@ export default function StudentRegisterForm({
     const arrayBuffer = await file.arrayBuffer();
     const cvBuffer = Buffer.from(arrayBuffer);
 
-    const response = await fetch("/api/auth/user", {
+    const response = await fetch("/api/auth/student", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -340,7 +340,12 @@ export default function StudentRegisterForm({
                 </small>
               )}
             </div>
-            <Button disabled={isSubmitting} className="w-full" type="submit">
+            <Button
+              disabled={isSubmitting}
+              variant={`${isSubmitting ? "disable" : "default"}`}
+              className="w-full"
+              type="submit"
+            >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" />
               ) : (
