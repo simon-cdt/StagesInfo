@@ -308,3 +308,169 @@ export const modifierContactEntreprise = async ({
     return { success: false, message: "Une erreur est survenue" };
   }
 };
+
+export const modifierOffreStage = async ({
+  id,
+  titre,
+  description,
+  duree,
+  dateDebut,
+  dateFin,
+  lieu,
+  competences,
+  secteur,
+}: {
+  id: string;
+  titre: string;
+  description: string;
+  duree: string;
+  dateDebut: string;
+  dateFin: string;
+  lieu: string;
+  competences: string[];
+  secteur: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return { success: false, message: "Vous n'êtes pas connecté." };
+    }
+    const stage = await db.stage.findUnique({
+      where: {
+        id,
+      },
+      select: { entrepriseId: true, statut: true },
+    });
+    if (
+      !stage ||
+      stage.entrepriseId !== session.user.id ||
+      stage.statut !== "Disponible"
+    ) {
+      return {
+        success: false,
+        message: "Vous n'êtes pas autorisé à faire celà",
+      };
+    }
+
+    const dateDebutDate = new Date(dateDebut);
+    dateDebutDate.setHours(0, 0, 0, 0);
+    const dateFinDate = new Date(dateFin);
+    dateFinDate.setHours(23, 59, 59, 999);
+
+    await db.stage.update({
+      where: { id },
+      data: {
+        titre,
+        description,
+        duree,
+        dateDebut: dateDebutDate,
+        dateFin: dateFinDate,
+        lieu,
+        competences: competences.join(","),
+        secteur: {
+          connect: { id: secteur },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      message: "L'offre de stage a bien été mise à jour",
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Une erreur est survenue" };
+  }
+};
+
+export const supprimerOffreStage = async ({
+  id,
+}: {
+  id: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return { success: false, message: "Vous n'êtes pas connecté." };
+    }
+    const stage = await db.stage.findUnique({
+      where: {
+        id,
+      },
+      select: { entrepriseId: true, statut: true },
+    });
+    if (
+      !stage ||
+      stage.entrepriseId !== session.user.id ||
+      stage.statut !== "Disponible"
+    ) {
+      return {
+        success: false,
+        message: "Vous n'êtes pas autorisé à faire celà",
+      };
+    }
+
+    await db.stage.delete({
+      where: { id },
+    });
+
+    return {
+      success: true,
+      message: "L'offre de stage a bien été supprimée",
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Une erreur est survenue" };
+  }
+};
+
+export const creerOffreStage = async ({
+  titre,
+  description,
+  duree,
+  dateDebut,
+  dateFin,
+  lieu,
+  competences,
+  secteur,
+}: {
+  titre: string;
+  description: string;
+  duree: string;
+  dateDebut: Date;
+  dateFin: Date;
+  lieu: string;
+  competences: string[];
+  secteur: string;
+}): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "entreprise") {
+      return { success: false, message: "Vous n'êtes pas connecté." };
+    }
+    dateDebut.setHours(0, 0, 0, 0);
+    dateFin.setHours(23, 59, 59, 999);
+
+    await db.stage.create({
+      data: {
+        titre,
+        description,
+        duree,
+        dateDebut,
+        dateFin,
+        lieu,
+        competences: competences.join(","),
+        secteurId: secteur,
+        entrepriseId: session.user.id,
+      },
+    });
+
+    return {
+      success: true,
+      message: "L'offre de stage a bien été créée",
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Une erreur est survenue" };
+  }
+};

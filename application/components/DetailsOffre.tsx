@@ -90,7 +90,7 @@ export default function StageDetailsScreen({ id }: { id: string }) {
 
     if (result.success) {
       toast.success(result.message);
-      router.push("/student");
+      router.push("/etudiant");
     } else {
       toast.error(result.message);
     }
@@ -138,17 +138,17 @@ export default function StageDetailsScreen({ id }: { id: string }) {
                       <h2 className="mb-4 text-xl font-semibold">
                         Informations du stage
                       </h2>
-                      {data.expiree || data.stage.statut === "Expirée" ? (
-                        <Badge className="border-gray-500 bg-white text-gray-600">
-                          Expirée
-                        </Badge>
-                      ) : data.stage.statut === "Pourvue" ? (
-                        <Badge className="border-gray-500 bg-white text-gray-600">
+                      {data.stage.statut === "Pourvue" ? (
+                        <Badge className="border-gray-500 bg-gray-50 text-gray-600">
                           Complet
+                        </Badge>
+                      ) : data.expiree || data.stage.statut === "Expirée" ? (
+                        <Badge className="border-red-500 bg-red-50 text-red-600">
+                          Expirée
                         </Badge>
                       ) : (
                         data.stage.statut === "Disponible" && (
-                          <Badge className="border-green-500 bg-white text-green-600">
+                          <Badge className="border-green-500 bg-green-50 text-green-600">
                             Disponible
                           </Badge>
                         )

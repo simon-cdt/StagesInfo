@@ -1,11 +1,10 @@
 "use client";
 
-import { PaperclipIcon, UploadIcon, XIcon } from "lucide-react";
-
 import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { Label } from "../ui/label";
+import Icon from "../Icon";
 
 export default function FileUpload({
   setValue,
@@ -73,7 +72,7 @@ export default function FileUpload({
             className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
             aria-hidden="true"
           >
-            <UploadIcon className="size-4 opacity-60" />
+            <Icon src="upload" className="w-5" />
           </div>
           <p className="mb-1.5 text-sm font-medium">{text}</p>
           <p className="text-muted-foreground text-xs">
@@ -94,10 +93,7 @@ export default function FileUpload({
             className="flex items-center justify-between gap-2 rounded-xl border px-4 py-2"
           >
             <div className="flex items-center gap-3 overflow-hidden">
-              <PaperclipIcon
-                className="size-4 shrink-0 opacity-60"
-                aria-hidden="true"
-              />
+              <Icon src="attachment" />
               <div className="min-w-0">
                 <p className="truncate text-[13px] font-medium">
                   {file.file.name}
@@ -112,7 +108,7 @@ export default function FileUpload({
               onClick={() => removeFile(files[0]?.id)}
               aria-label="Remove file"
             >
-              <XIcon className="size-4" aria-hidden="true" />
+              <Icon src="xmark" className="w-5" />
             </Button>
           </div>
         </div>

@@ -16,7 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { FormField } from "@/components/form/FormField";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
@@ -27,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PasswordConditionsField from "@/components/form/PasswordConditionsField";
 import PasswordField from "@/components/form/PasswordField";
 import { createEntreprise } from "@/lib/actions/entreprise";
+import Icon from "@/components/Icon";
 
 function useSecteurs() {
   return useQuery({
@@ -135,13 +135,7 @@ export default function CompanyRegisterForm() {
         onClick={() => router.push("/register")}
         className="best-transition flex w-fit"
       >
-        <Image
-          src={"/icon/nav-arrow-left.svg"}
-          alt="Flèche vers la gauche"
-          width={700}
-          height={700}
-          className="w-4"
-        />
+        <Icon src="nav-arrow-left" />
         Retour
       </Button>
       <Card className="flex w-[700px] flex-col gap-1">
@@ -163,15 +157,7 @@ export default function CompanyRegisterForm() {
                 placeholder="Le nom de l'entreprise"
                 register={register}
                 error={errors.nom}
-                icon={
-                  <Image
-                    src={"/icon/building.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="building" />}
               />
               <FormField
                 label="E-mail"
@@ -180,15 +166,7 @@ export default function CompanyRegisterForm() {
                 placeholder="entreprise@mail.com"
                 register={register}
                 error={errors.email}
-                icon={
-                  <Image
-                    src={"/icon/mail.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="mail" />}
               />
             </div>
             <FormField
@@ -198,15 +176,7 @@ export default function CompanyRegisterForm() {
               placeholder="L'adresse de l'entreprise"
               register={register}
               error={errors.adresse}
-              icon={
-                <Image
-                  src={"/icon/map-pin.svg"}
-                  alt="Icon"
-                  width={700}
-                  height={700}
-                  className="w-5"
-                />
-              }
+              icon={<Icon src="map-pin" />}
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -234,15 +204,7 @@ export default function CompanyRegisterForm() {
                 placeholder="Nom du contact"
                 register={register}
                 error={errors.contactNom}
-                icon={
-                  <Image
-                    src={"/icon/user.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="user" />}
               />
               <FormField
                 label="Prénom"
@@ -251,15 +213,7 @@ export default function CompanyRegisterForm() {
                 placeholder="Prénom du contact"
                 register={register}
                 error={errors.contactPrenom}
-                icon={
-                  <Image
-                    src={"/icon/user.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="user" />}
               />
             </div>
             <FormField
@@ -269,15 +223,7 @@ export default function CompanyRegisterForm() {
               placeholder="contact@mail.com"
               register={register}
               error={errors.contactEmail}
-              icon={
-                <Image
-                  src={"/icon/mail.svg"}
-                  alt="Icon"
-                  width={700}
-                  height={700}
-                  className="w-4"
-                />
-              }
+              icon={<Icon src="mail" />}
             />
 
             <Separator className="bg-black/50" />

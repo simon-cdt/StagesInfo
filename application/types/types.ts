@@ -102,6 +102,67 @@ export type FetchEvaluations = [
   },
 ];
 
+export type FetchOffresEntreprise = [
+  {
+    id: string;
+    titre: string;
+    description: string;
+    secteur: {
+      id: string;
+      couleur: string;
+      label: string;
+    };
+    duree: string;
+    dateDebut: Date;
+    dateFin: Date;
+    lieu: string;
+    statut: StageStatut;
+    competences: string;
+  },
+];
+
+export type FetchCandidaturesRecues = [
+  {
+    id: string;
+    etudiant: {
+      id: string;
+      nom: string;
+      prenom: string;
+      email: string;
+      competences: string;
+    };
+    date: Date;
+    statut: CandidatureStatut;
+    stage: {
+      statut: StageStatut;
+      dateFin: Date;
+    };
+    disable: boolean;
+  },
+];
+
+export type FetchEvaluationEntreprise = [
+  {
+    id: string;
+    etudiant: {
+      id: string;
+      nom: string;
+      prenom: string;
+      email: string;
+    };
+    stage: {
+      id: string;
+      titre: string;
+      evaluation: {
+        id: string;
+        note: number;
+        commentaire: string;
+        date: Date;
+      } | null;
+    };
+  },
+];
+
 // eslint-disable-next-line
 export const colorMap: any = {
   blue: {

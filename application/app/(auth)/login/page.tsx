@@ -19,7 +19,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import PasswordField from "@/components/form/PasswordField";
 import { FormField } from "@/components/form/FormField";
-import Image from "next/image";
+import Icon from "@/components/Icon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,11 +27,11 @@ export default function LoginPage() {
   const zodFormSchema = z.object({
     email: z
       .string()
-      .min(1, "L'email est requis.")
+      .nonempty("L'email est requis.")
       .email("L'email est invalide."),
     mdp: z
       .string()
-      .min(1, "Le mot de passe est requis.")
+      .nonempty("Le mot de passe est requis.")
       .min(8, "Le mot de passe doit contenir au moins huit caractères."),
   });
   type FormSchema = z.infer<typeof zodFormSchema>;
@@ -87,15 +87,7 @@ export default function LoginPage() {
                   placeholder="exemple@mail.com"
                   register={register}
                   error={errors.email}
-                  icon={
-                    <Image
-                      src={"/icon/mail.svg"}
-                      alt="Icon"
-                      width={700}
-                      height={700}
-                      className="w-4"
-                    />
-                  }
+                  icon={<Icon src="mail" />}
                 />
                 <PasswordField
                   id="mdp"

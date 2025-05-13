@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FieldError } from "react-hook-form";
+import { Textarea } from "../ui/textarea";
 
 interface FormFieldProps {
   label: string;
@@ -12,6 +13,7 @@ interface FormFieldProps {
   error?: FieldError;
   icon?: React.ReactNode;
   defaultValue?: string;
+  textarea?: boolean;
 }
 
 export const FormField = ({
@@ -23,6 +25,7 @@ export const FormField = ({
   error,
   icon,
   defaultValue,
+  textarea,
 }: FormFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -33,14 +36,24 @@ export const FormField = ({
             {icon}
           </div>
         )}
-        <Input
-          id={name}
-          type={type}
-          placeholder={placeholder}
-          {...register(name)}
-          className={icon ? "pl-9" : ""}
-          defaultValue={defaultValue}
-        />
+        {textarea ? (
+          <Textarea
+            id={name}
+            placeholder={placeholder}
+            {...register(name)}
+            className={icon ? "pl-9" : ""}
+            defaultValue={defaultValue}
+          />
+        ) : (
+          <Input
+            id={name}
+            type={type}
+            placeholder={placeholder}
+            {...register(name)}
+            className={icon ? "pl-9" : ""}
+            defaultValue={defaultValue}
+          />
+        )}
       </div>
       {error && <p className="text-sm text-red-500">{error.message}</p>}
     </div>

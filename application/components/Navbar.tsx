@@ -21,32 +21,41 @@ export default function Navbar() {
                 alt="Logo"
                 width={500}
                 height={500}
-                className="h-20"
+                className="h-14"
               />
             </Link>
           </div>
           <div className="flex w-[40%] items-center justify-evenly">
-            <Link href={"/"} className="text-xl font-bold">
+            <Link href={"/"} className="text-xl font-bold hover:underline">
               Rechercher des stages
             </Link>
             {session.user.role === "etudiant" ? (
-              <Link href={"/student"} className="text-xl font-bold">
+              <Link
+                href={"/etudiant"}
+                className="text-xl font-bold hover:underline"
+              >
                 Espace étudiant
               </Link>
             ) : session.user.role === "admin" ? (
-              <Link href={"/admin"} className="text-xl font-bold">
+              <Link
+                href={"/admin"}
+                className="text-xl font-bold hover:underline"
+              >
                 Espace administrateur
               </Link>
             ) : (
               session.user.role === "entreprise" && (
-                <Link href={"/entreprise"} className="text-xl font-bold">
+                <Link
+                  href={"/entreprise"}
+                  className="text-xl font-bold hover:underline"
+                >
                   Espace entreprise
                 </Link>
               )
             )}
           </div>
           <div className="flex w-[30%] justify-center gap-7">
-            <Link href={"/account"}>
+            <Link href={"/compte"}>
               <Button size={"icon"} variant={"ghost"}>
                 <Image
                   src={"/icon/user.svg"}

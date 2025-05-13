@@ -20,11 +20,11 @@ import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormField } from "@/components/form/FormField";
-import Image from "next/image";
 import FileUpload from "@/components/form/FileUpload";
 import { createEtudiant } from "@/lib/actions/etudiant";
 import PasswordConditionsField from "@/components/form/PasswordConditionsField";
 import PasswordField from "@/components/form/PasswordField";
+import Icon from "@/components/Icon";
 
 export default function StudentRegisterForm() {
   const router = useRouter();
@@ -177,15 +177,7 @@ export default function StudentRegisterForm() {
                 placeholder="Votre nom"
                 register={register}
                 error={errors.prenom}
-                icon={
-                  <Image
-                    src={"/icon/user.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="user" />}
               />
               <FormField
                 label="Prénom"
@@ -194,15 +186,7 @@ export default function StudentRegisterForm() {
                 placeholder="Votre prénom"
                 register={register}
                 error={errors.prenom}
-                icon={
-                  <Image
-                    src={"/icon/user.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    className="w-4"
-                  />
-                }
+                icon={<Icon src="user" />}
               />
             </div>
             <FormField
@@ -212,15 +196,7 @@ export default function StudentRegisterForm() {
               placeholder="exemple@eduge.ch"
               register={register}
               error={errors.email}
-              icon={
-                <Image
-                  src={"/icon/mail.svg"}
-                  alt="Icon"
-                  width={700}
-                  height={700}
-                  className="w-4"
-                />
-              }
+              icon={<Icon src="mail" />}
             />
             <div className="grid grid-cols-2 gap-4">
               <PasswordConditionsField
@@ -265,13 +241,7 @@ export default function StudentRegisterForm() {
                       className="ml-1 h-4 w-4"
                       onClick={() => supprimerCompetence(i)}
                     >
-                      <Image
-                        src={"/icon/xmark.svg"}
-                        alt="icon"
-                        width={700}
-                        height={700}
-                        className="w-4"
-                      />
+                      <Icon src="xmark" />
                     </Button>
                   </Badge>
                 ))}
@@ -294,14 +264,7 @@ export default function StudentRegisterForm() {
                     competences.length >= 5 || !nouvelleCompetence.trim()
                   }
                 >
-                  <Image
-                    src={"/icon/plus.svg"}
-                    alt="Icon"
-                    width={700}
-                    height={700}
-                    color="white"
-                    className="w-6"
-                  />
+                  <Icon src="plus" />
                 </Button>
               </div>
               <p className="text-muted-foreground text-xs">

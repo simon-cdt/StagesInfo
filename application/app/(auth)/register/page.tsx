@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Icon from "@/components/Icon";
 
 export default function InscriptionPage() {
   return (
@@ -50,11 +50,8 @@ export const StudentEntreprise = ({ eleve }: { eleve: boolean }) => {
       <Card className="hover:border-primary best-transition flex cursor-pointer flex-col gap-4">
         <CardHeader className="flex w-full flex-col items-center gap-2">
           <div className="bg-primary/10 mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full p-3">
-            <Image
-              src={`/icon/${eleve ? "graduation-cap" : "building"}.svg`}
-              alt="Icon"
-              width={700}
-              height={700}
+            <Icon
+              src={`${eleve ? "graduation-cap" : "building"}.svg`}
               className="text-primary h-8 w-8"
             />
           </div>
@@ -73,24 +70,12 @@ export const StudentEntreprise = ({ eleve }: { eleve: boolean }) => {
             <li className="flex items-center justify-center gap-2">
               {eleve ? (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Accédez à des milliers d&apos;offres de stage
                 </>
               ) : (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Publiez vos offres de stage
                 </>
               )}
@@ -98,24 +83,12 @@ export const StudentEntreprise = ({ eleve }: { eleve: boolean }) => {
             <li className="flex items-center justify-center gap-2">
               {eleve ? (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Postulez en quelques clics
                 </>
               ) : (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Gérez les candidatures reçues
                 </>
               )}
@@ -123,24 +96,12 @@ export const StudentEntreprise = ({ eleve }: { eleve: boolean }) => {
             <li className="flex items-center justify-center gap-2">
               {eleve ? (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Suivez vos candidatures
                 </>
               ) : (
                 <>
-                  <Image
-                    src={"/icon/check.svg"}
-                    alt="icon"
-                    height={700}
-                    width={700}
-                    className="w-4"
-                  />
+                  <Icon src="check" />
                   Trouvez les talents de demain
                 </>
               )}

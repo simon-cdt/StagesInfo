@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const secteurs = await db.stage.findMany({
+  const stages = await db.stage.findMany({
     where: {
       statut: "Disponible",
       dateDebut: { lte: new Date() },
@@ -32,5 +32,5 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json(secteurs);
+  return NextResponse.json(stages);
 }

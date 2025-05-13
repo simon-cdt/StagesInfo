@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { colorMap, FetchStages } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -29,7 +30,16 @@ export default function Home() {
       </div>
 
       <div className="flex flex-wrap justify-between gap-y-10">
-        {isLoading ? null : isError ? (
+        {isLoading ? (
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+            return (
+              <Skeleton
+                className="h-[260px] w-[440px] rounded-lg bg-gray-200"
+                key={i}
+              />
+            );
+          })
+        ) : isError ? (
           <p className="text-red-500">
             Une erreur est survenue lors du chargement
           </p>

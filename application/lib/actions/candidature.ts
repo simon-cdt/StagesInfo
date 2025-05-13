@@ -98,3 +98,104 @@ export const RetirerCandidature = async ({
     };
   }
 };
+
+export const refuserCandidature = async ({
+  id,
+}: {
+  id: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+}> => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const candidature = await db.candidature.findUnique({
+      where: { id },
+      select: { stage: { select: { entrepriseId: true } } },
+    });
+    if (
+      !candidature ||
+      !session ||
+      session.user.id !== candidature.stage.entrepriseId
+    ) {
+      return {
+        success: false,
+        message: "Vous n'êtes pas autorisé à faire cette action.",
+      };
+    }
+
+    await db.candidature.update({
+      where: { id },
+      data: { statut: "Refusée" },
+    });
+
+    return {
+      success: true,
+      message: "Candidature refusée avec succès.",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Une erreur est survenue.",
+    };
+  }
+};
+
+export const accepterCandidature = async ({
+  id,
+}: {
+  id: string;
+}): Promise<{
+  success: boolean;
+  message: string;
+}> => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const candidature = await db.candidature.findUnique({
+      where: { id },
+      select: { stageId: true, stage: { select: { entrepriseId: true } } },
+    });
+    if (
+      !candidature ||
+      !session ||
+      session.user.id !== candidature.stage.entrepriseId
+    ) {
+      return {
+        success: false,
+        message: "Vous n'êtes pas autorisé à faire cette action.",
+      };
+    }
+
+    await db.candidature.update({
+      where: { id },
+      data: { statut: "Acceptée" },
+    });
+
+    await db.candidature.updateMany({
+      where: {
+        statut: "EnAttente",
+        stageId: candidature.stageId,
+      },
+      data: { statut: "Refusée" },
+    });
+
+    await db.stage.update({
+      where: { id: candidature.stageId },
+      data: { statut: "Pourvue" },
+    });
+
+    return {
+      success: true,
+      message: "Candidature acceptée avec succès.",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Une erreur est survenue.",
+    };
+  }
+};
