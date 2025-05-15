@@ -51,7 +51,7 @@ export const StudentEntreprise = ({ eleve }: { eleve: boolean }) => {
         <CardHeader className="flex w-full flex-col items-center gap-2">
           <div className="bg-primary/10 mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full p-3">
             <Icon
-              src={`${eleve ? "graduation-cap" : "building"}.svg`}
+              src={`${eleve ? "graduation-cap" : "building"}`}
               className="text-primary h-8 w-8"
             />
           </div>

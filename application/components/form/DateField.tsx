@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/datefield-rac";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Icon from "../Icon";
 
 export default function DateField({
   label,
@@ -46,14 +47,8 @@ export default function DateField({
     >
       <Label className="text-foreground text-sm font-medium">{label}</Label>
       <div className="relative">
-        <div className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
-          <Image
-            src={"/icon/calendar.svg"}
-            alt="Icon"
-            width={700}
-            height={700}
-            className="w-4"
-          />
+        <div className="text-muted-foreground absolute top-1/2 left-3 z-10 -translate-y-1/2">
+          <Icon src="calendar" />
         </div>
         <DateInput className="w-full pl-9" />
       </div>

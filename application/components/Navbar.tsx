@@ -29,9 +29,9 @@ export default function Navbar() {
             <Link href={"/"} className="text-xl font-bold hover:underline">
               Rechercher des stages
             </Link>
-            {session.user.role === "etudiant" ? (
+            {session.user.role === "student" ? (
               <Link
-                href={"/etudiant"}
+                href={"/student"}
                 className="text-xl font-bold hover:underline"
               >
                 Espace étudiant
@@ -44,9 +44,9 @@ export default function Navbar() {
                 Espace administrateur
               </Link>
             ) : (
-              session.user.role === "entreprise" && (
+              session.user.role === "company" && (
                 <Link
-                  href={"/entreprise"}
+                  href={"/company"}
                   className="text-xl font-bold hover:underline"
                 >
                   Espace entreprise
@@ -55,7 +55,7 @@ export default function Navbar() {
             )}
           </div>
           <div className="flex w-[30%] justify-center gap-7">
-            <Link href={"/compte"}>
+            <Link href={"/account"}>
               <Button size={"icon"} variant={"ghost"}>
                 <Image
                   src={"/icon/user.svg"}

@@ -6,11 +6,11 @@ import { authOptions } from "../auth";
 import * as argon2 from "argon2";
 
 export const updatePassword = async ({
-  mdpActuel,
-  nvMdp,
+  currentPassword,
+  newPassword,
 }: {
-  mdpActuel: string;
-  nvMdp: string;
+  currentPassword: string;
+  newPassword: string;
 }): Promise<
   | { success: false; message: string }
   | { success: true; message: "Le mot de passe a été modifé avec succès" }
@@ -26,32 +26,35 @@ export const updatePassword = async ({
     const role = session.user.role;
     const id = session.user.id;
 
-    if (role === "etudiant") {
-      const etudiant = await db.etudiant.findUnique({
+    if (role === "student") {
+      const student = await db.student.findUnique({
         where: { id },
-        select: { mdp: true },
+        select: { password: true },
       });
-      if (!etudiant) {
+      if (!student) {
         return {
           success: false,
           message: "L'utilisateur n'existe pas",
         };
       }
 
-      const verifyPassword = await argon2.verify(etudiant.mdp, mdpActuel);
-      if (!verifyPassword) {
+      const isPasswordValid = await argon2.verify(
+        student.password,
+        currentPassword,
+      );
+      if (!isPasswordValid) {
         return {
           success: false,
           message: "Le mot de passe actuel est incorrect",
         };
       }
 
-      const newPassHashed = await argon2.hash(nvMdp);
+      const newPassHashed = await argon2.hash(newPassword);
 
-      await db.etudiant.update({
+      await db.student.update({
         where: { id },
         data: {
-          mdp: newPassHashed,
+          password: newPassHashed,
         },
       });
 
@@ -59,32 +62,35 @@ export const updatePassword = async ({
         success: true,
         message: "Le mot de passe a été modifé avec succès",
       };
-    } else if (role === "entreprise") {
-      const entreprise = await db.entreprise.findUnique({
+    } else if (role === "company") {
+      const company = await db.company.findUnique({
         where: { id },
-        select: { mdp: true },
+        select: { password: true },
       });
-      if (!entreprise) {
+      if (!company) {
         return {
           success: false,
           message: "L'utilisateur n'existe pas",
         };
       }
 
-      const verifyPassword = await argon2.verify(entreprise.mdp, mdpActuel);
-      if (!verifyPassword) {
+      const isValidPassword = await argon2.verify(
+        company.password,
+        currentPassword,
+      );
+      if (!isValidPassword) {
         return {
           success: false,
           message: "Le mot de passe actuel est incorrect",
         };
       }
 
-      const newPassHashed = await argon2.hash(nvMdp);
+      const newPassHashed = await argon2.hash(newPassword);
 
-      await db.entreprise.update({
+      await db.company.update({
         where: { id },
         data: {
-          mdp: newPassHashed,
+          password: newPassHashed,
         },
       });
 
@@ -95,7 +101,7 @@ export const updatePassword = async ({
     } else if (role === "admin") {
       const admin = await db.admin.findUnique({
         where: { id },
-        select: { mdp: true },
+        select: { password: true },
       });
       if (!admin) {
         return {
@@ -104,20 +110,23 @@ export const updatePassword = async ({
         };
       }
 
-      const verifyPassword = await argon2.verify(admin.mdp, mdpActuel);
-      if (!verifyPassword) {
+      const isValidPassword = await argon2.verify(
+        admin.password,
+        currentPassword,
+      );
+      if (!isValidPassword) {
         return {
           success: false,
           message: "Le mot de passe actuel est incorrect",
         };
       }
 
-      const newPassHashed = await argon2.hash(nvMdp);
+      const newPassHashed = await argon2.hash(newPassword);
 
       await db.admin.update({
         where: { id },
         data: {
-          mdp: newPassHashed,
+          password: newPassHashed,
         },
       });
 

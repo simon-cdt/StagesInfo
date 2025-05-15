@@ -3,186 +3,92 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const secteurs = [
-    {
-      label: "Informatique",
-      couleur: "blue",
-    },
-    {
-      label: "Réseau",
-      couleur: "green",
-    },
-    {
-      label: "Développement",
-      couleur: "red",
-    },
-    {
-      label: "Data Science",
-      couleur: "purple",
-    },
-    {
-      label: "DevOps",
-      couleur: "orange",
-    },
-    {
-      label: "Mobile",
-      couleur: "pink",
-    },
-    {
-      label: "Web",
-      couleur: "cyan",
-    },
-    {
-      label: "IA",
-      couleur: "teal",
-    },
-    {
-      label: "Consulting",
-      couleur: "lime",
-    },
-  ];
+  // const sectors = [
+  //   {
+  //     label: "Informatique",
+  //     color: "blue",
+  //   },
+  //   {
+  //     label: "Réseau",
+  //     color: "green",
+  //   },
+  //   {
+  //     label: "Développement",
+  //     color: "red",
+  //   },
+  //   {
+  //     label: "Data Science",
+  //     color: "purple",
+  //   },
+  //   {
+  //     label: "DevOps",
+  //     color: "orange",
+  //   },
+  //   {
+  //     label: "Mobile",
+  //     color: "pink",
+  //   },
+  //   {
+  //     label: "Web",
+  //     color: "cyan",
+  //   },
+  //   {
+  //     label: "IA",
+  //     color: "teal",
+  //   },
+  //   {
+  //     label: "Consulting",
+  //     color: "lime",
+  //   },
+  // ];
 
-  const stages = [
-    {
-      titre: "Développeur Fullstack",
-      description: "Stage de développement fullstack avec Node.js et React.",
-      competences: "Node.js,React,TypeScript",
-      duree: "1 an et demi",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Paris",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkow0000ucpkb11pjqs1",
+  const companies = await prisma.company.findMany({
+    select: {
+      id: true,
     },
-    {
-      titre: "Développeur Backend",
-      description: "Stage de développement backend avec Node.js et Express.",
-      competences: "Node.js,Express,TypeScript",
-      duree: "6 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Lyon",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkow0000ucpkb11pjqs1",
-    },
-    {
-      titre: "Développeur Frontend",
-      description: "Stage de développement frontend avec React et Redux.",
-      competences: "React,Redux,JavaScript",
-      duree: "4 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Marseille",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkqe0004ucpkla21l2ux",
-    },
-    {
-      titre: "Data Scientist",
-      description: "Stage en science des données avec Python et TensorFlow.",
-      competences: "Python,TensorFlow,Data Analysis",
-      duree: "1 an",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Toulouse",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkqe0004ucpkla21l2ux",
-    },
-    {
-      titre: "Ingénieur DevOps",
-      description: "Stage en ingénierie DevOps avec Docker et Kubernetes.",
-      competences: "Docker,Kubernetes,CI/CD",
-      duree: "8 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Nantes",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkqe0004ucpkla21l2ux",
-    },
-    {
-      titre: "Développeur Mobile",
-      description: "Stage de développement mobile avec Flutter.",
-      competences: "Flutter,Dart,Mobile Development",
-      duree: "5 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Bordeaux",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkow0000ucpkb11pjqs1",
-    },
-    {
-      titre: "Ingénieur QA",
-      description: "Stage en assurance qualité avec Selenium.",
-      competences: "Selenium,QA,Testing",
-      duree: "3 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Strasbourg",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkqe0004ucpkla21l2ux",
-    },
-    {
-      titre: "Analyste de données",
-      description: "Stage d'analyse de données avec SQL et Excel.",
-      competences: "SQL,Excel,Data Analysis",
-      duree: "2 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Nice",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkow0000ucpkb11pjqs1",
-    },
-    {
-      titre: "Développeur Web",
-      description: "Stage de développement web avec HTML, CSS et JavaScript.",
-      competences: "HTML,CSS,JavaScript",
-      duree: "4 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Lille",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkow0000ucpkb11pjqs1",
-    },
-    {
-      titre: "Ingénieur Réseau",
-      description: "Stage en ingénierie réseau avec Cisco.",
-      competences: "Cisco,Networking,Security",
-      duree: "6 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Rennes",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkpu0002ucpknbs4vy7s",
-    },
-    {
-      titre: "Développeur IA",
-      description: "Stage de développement IA avec PyTorch.",
-      competences: "PyTorch,Machine Learning,AI",
-      duree: "1 an",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Montpellier",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkpu0002ucpknbs4vy7s",
-    },
-    {
-      titre: "Consultant IT",
-      description: "Stage de consultant IT avec SAP.",
-      competences: "SAP,Consulting,IT Strategy",
-      duree: "8 mois",
-      dateDebut: new Date("2025-05-08"),
-      dateFin: new Date("2025-06-07"),
-      lieu: "Grenoble",
-      entrepriseId: "cmaf3oz2100010cjuh8o06ifd",
-      secteurId: "cmaf3pkpu0002ucpknbs4vy7s",
-    },
-  ];
+  });
 
-  // for (const secteurData of secteurs) {
-  //   await prisma.secteur.create({ data: secteurData });
+  const sectors = await prisma.sector.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const offers = Array.from({ length: 100 }, (_, i) => {
+    const randomCompany = Math.floor(Math.random() * companies.length);
+    const randomSector = Math.floor(Math.random() * sectors.length);
+    return {
+      title: `Offre ${i + 1}`,
+      description: `Description de l'offre ${i + 1}`,
+      skills: "Skill1,Skill2,Skill3",
+      duration: `${(i % 12) + 1} mois`,
+      startDate: new Date(`2025-05-01`),
+      endDate: new Date(`2025-06-01`),
+      location: `Ville ${i + 1}`,
+      companyId: companies[randomCompany].id,
+      sectorId: sectors[randomSector].id,
+    };
+  });
+  // const offers = [
+  //   {
+  //     title: "Développeur Fullstack",
+  //     description: "Stage de développement fullstack avec Node.js et React.",
+  //     skills: "Node.js,React,TypeScript",
+  //     duration: "1 an et demi",
+  //     startDate: new Date("2025-05-08"),
+  //     endDate: new Date("2025-06-07"),
+  //     location: "Paris",
+  //     companyId: "cmaoegpur0000uc6c7p8c4u7r",
+  //     sectorId: "cmaoefdi80000ucucslsb5jbt",
+  //   },
+  // ];
+
+  // for (const sectorsData of sectors) {
+  //   await prisma.sector.create({ data: sectorsData });
   // }
 
-  for (const stageData of stages) {
-    await prisma.stage.create({ data: stageData });
+  for (const offer of offers) {
+    await prisma.offer.create({ data: offer });
   }
 
   console.log("Seed data created successfully!");

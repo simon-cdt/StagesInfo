@@ -12,26 +12,26 @@ export async function GET() {
     });
   }
 
-  let user: {
-    nom: string;
-    prenom: string;
+  let student: {
+    name: string;
+    firstName: string;
     email: string;
-    cv: Uint8Array<ArrayBufferLike>;
-    competences: string;
+    resume: Uint8Array<ArrayBufferLike>;
+    skills: string;
   } | null = null;
 
-  if (session.user.role === "etudiant") {
-    user = await db.etudiant.findUnique({
+  if (session.user.role === "student") {
+    student = await db.student.findUnique({
       where: { id: session.user.id },
       select: {
-        nom: true,
-        prenom: true,
+        name: true,
+        firstName: true,
         email: true,
-        cv: true,
-        competences: true,
+        resume: true,
+        skills: true,
       },
     });
   }
 
-  return NextResponse.json(user);
+  return NextResponse.json(student);
 }

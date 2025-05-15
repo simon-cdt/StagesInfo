@@ -20,6 +20,26 @@ export default async function StudentLayout({
       url: "user.svg",
       path: "/admin",
     },
+    {
+      name: "Les entreprises",
+      url: "building.svg",
+      path: "/admin/companies",
+    },
+    {
+      name: "Les offres",
+      url: "multiple-pages.svg",
+      path: "/admin/offers",
+    },
+    {
+      name: "Les candidatures",
+      url: "page.svg",
+      path: "/admin/submissions",
+    },
+    {
+      name: "Les évaluations",
+      url: "star.svg",
+      path: "/admin/evaluations",
+    },
   ];
 
   return (

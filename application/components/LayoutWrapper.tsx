@@ -6,6 +6,7 @@ import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 export default function LayoutWrapper({
   children,
@@ -39,7 +40,10 @@ export default function LayoutWrapper({
       <QueryClientProvider client={queryClient}>
         <NuqsAdapter>
           <Navbar />
-          {children}
+          <div className="flex min-h-[calc(100vh-128px-80px)] w-full flex-col items-center overflow-x-hidden">
+            {children}
+          </div>
+          <Footer />
         </NuqsAdapter>
       </QueryClientProvider>
     </SessionProvider>

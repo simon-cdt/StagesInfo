@@ -19,39 +19,39 @@ import { useRouter } from "next/navigation";
 import { FormField } from "@/components/form/FormField";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
-import { FetchSecteursList } from "@/types/types";
+import { FetchSectorsList } from "@/types/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import PasswordConditionsField from "@/components/form/PasswordConditionsField";
 import PasswordField from "@/components/form/PasswordField";
-import { createEntreprise } from "@/lib/actions/entreprise";
+import { createCompany } from "@/lib/actions/company";
 import Icon from "@/components/Icon";
 
-function useSecteurs() {
+function useSectors() {
   return useQuery({
-    queryKey: ["secteurs"],
-    queryFn: async (): Promise<FetchSecteursList> => {
-      const response = await fetch(`/api/secteurs`);
+    queryKey: ["sectors"],
+    queryFn: async (): Promise<FetchSectorsList> => {
+      const response = await fetch(`/api/sectors`);
       return await response.json();
     },
   });
 }
 
 export default function CompanyRegisterForm() {
-  const { isError, data: secteurs, isLoading } = useSecteurs();
+  const { isError, data: sectors, isLoading } = useSectors();
 
   const router = useRouter();
 
   const zodFormSchema = z
     .object({
-      nom: z.string().nonempty("Le nom est requis."),
-      adresse: z.string().nonempty("L'adresse est requise."),
+      name: z.string().nonempty("Le nom est requis."),
+      address: z.string().nonempty("L'adresse est requise."),
       email: z
         .string()
         .email("L'email doit être valide.")
         .nonempty("L'e-mail est requis."),
-      mdp: z
+      password: z
         .string()
         .nonempty("Le mot de passe est requis.")
         .min(8, "Le mot de passe doit au moins faire huit caractères.")
@@ -59,19 +59,19 @@ export default function CompanyRegisterForm() {
           message:
             "Le mot de passe doit contenir au moins une majuscule, un chiffre et un caractère spécial",
         }),
-      confirmationMdp: z
+      passwordConfirm: z
         .string()
         .nonempty("La confirmation du mot de passe est requise."),
-      contactNom: z.string().nonempty("Le nom du contact est requis."),
-      contactPrenom: z.string().nonempty("Le prénom du contact est requis."),
+      contactName: z.string().nonempty("Le nom du contact est requis."),
+      contactFirstName: z.string().nonempty("Le prénom du contact est requis."),
       contactEmail: z
         .string()
         .email("L'email doit être valide.")
         .nonempty("L'e-mail du contact est requis."),
-      secteurs: z.array(z.string()).min(1, "Au moins un secteur est requis."),
+      sectors: z.array(z.string()).min(1, "Au moins un secteur est requis."),
     })
-    .refine((data) => data.mdp === data.confirmationMdp, {
-      path: ["confirmationMdp"],
+    .refine((data) => data.password === data.passwordConfirm, {
+      path: ["passwordConfirm"],
       message: "Les mots de passe ne correspondent pas.",
     });
   type FormSchema = z.infer<typeof zodFormSchema>;
@@ -85,36 +85,36 @@ export default function CompanyRegisterForm() {
   } = useForm<FormSchema>({
     resolver: zodResolver(zodFormSchema),
     defaultValues: {
-      secteurs: [],
+      sectors: [],
     },
   });
-  const secteursWatch = watch("secteurs");
+  const sectorsWatch = watch("sectors");
   const toggleSecteur = (id: string, checked: boolean) => {
-    const current = watch("secteurs") || [];
+    const current = watch("sectors") || [];
     const updated = checked
       ? [...current, id]
-      : current.filter((secteurId) => secteurId !== id);
+      : current.filter((sectorId) => sectorId !== id);
 
-    setValue("secteurs", updated, { shouldValidate: true });
+    setValue("sectors", updated, { shouldValidate: true });
   };
 
   const handleSubmitForm = async (data: FormSchema) => {
-    const response = await createEntreprise({
-      nom: data.nom,
-      adresse: data.adresse,
+    const response = await createCompany({
+      name: data.name,
+      address: data.address,
       email: data.email,
-      mdp: data.mdp,
-      contactNom: data.contactNom,
-      contactPrenom: data.contactPrenom,
+      password: data.password,
+      contactName: data.contactName,
+      contactFirstName: data.contactFirstName,
       contactEmail: data.contactEmail,
-      secteurs: data.secteurs,
+      sectors: data.sectors,
     });
 
     if (response.success) {
       toast.success(response.message);
       const signInData = await signIn("credentials", {
         email: data.email,
-        password: data.mdp,
+        password: data.password,
         redirect: false,
       });
       if (signInData?.ok) {
@@ -152,11 +152,11 @@ export default function CompanyRegisterForm() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 label="Nom"
-                name="nom"
+                name="name"
                 type="text"
                 placeholder="Le nom de l'entreprise"
                 register={register}
-                error={errors.nom}
+                error={errors.name}
                 icon={<Icon src="building" />}
               />
               <FormField
@@ -171,25 +171,25 @@ export default function CompanyRegisterForm() {
             </div>
             <FormField
               label="Adresse"
-              name="adresse"
+              name="address"
               type="text"
               placeholder="L'adresse de l'entreprise"
               register={register}
-              error={errors.adresse}
+              error={errors.address}
               icon={<Icon src="map-pin" />}
             />
 
             <div className="grid grid-cols-2 gap-4">
               <PasswordConditionsField
-                id="mdp"
+                id="password"
                 setValue={setValue}
                 label="Mot de passe"
               />
               <PasswordField
-                id="confirmationMdp"
+                id="passwordConfirm"
                 register={register}
                 label="Confirmer le mot de passe"
-                errorsForm={errors.confirmationMdp?.message}
+                errorsForm={errors.passwordConfirm?.message}
               />
             </div>
             <Separator className="bg-black/50" />
@@ -199,20 +199,20 @@ export default function CompanyRegisterForm() {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 label="Nom"
-                name="contactNom"
+                name="contactName"
                 type="text"
                 placeholder="Nom du contact"
                 register={register}
-                error={errors.contactNom}
+                error={errors.contactName}
                 icon={<Icon src="user" />}
               />
               <FormField
                 label="Prénom"
-                name="contactPrenom"
+                name="contactFirstName"
                 type="text"
                 placeholder="Prénom du contact"
                 register={register}
-                error={errors.contactPrenom}
+                error={errors.contactFirstName}
                 icon={<Icon src="user" />}
               />
             </div>
@@ -249,34 +249,32 @@ export default function CompanyRegisterForm() {
                   un secteur actuellement. Veuillez réessayer plus tard...
                 </p>
               ) : (
-                secteurs &&
-                secteurs.map((secteur) => {
+                sectors &&
+                sectors.map((sector) => {
                   return (
                     <div
-                      key={secteur.id}
+                      key={sector.id}
                       className="flex w-[50%] items-center gap-2"
                     >
                       <Checkbox
-                        id={`secteur-${secteur.id}`}
-                        checked={secteursWatch?.includes(secteur.id)}
+                        id={`secteur-${sector.id}`}
+                        checked={sectorsWatch?.includes(sector.id)}
                         onCheckedChange={(checked) =>
-                          toggleSecteur(secteur.id, Boolean(checked))
+                          toggleSecteur(sector.id, Boolean(checked))
                         }
                       />
                       <Label
-                        htmlFor={`secteur-${secteur.id}`}
+                        htmlFor={`secteur-${sector.id}`}
                         className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        {secteur.label}
+                        {sector.label}
                       </Label>
                     </div>
                   );
                 })
               )}
-              {errors.secteurs && (
-                <p className="text-sm text-red-500">
-                  {errors.secteurs.message}
-                </p>
+              {errors.sectors && (
+                <p className="text-sm text-red-500">{errors.sectors.message}</p>
               )}
             </div>
             <Button disabled={isSubmitting} className="w-full" type="submit">

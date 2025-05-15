@@ -11,7 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { noterEleve, updateEvaluation } from "@/lib/actions/evaluation";
+import { ratingStudent, updateRate } from "@/lib/actions/evaluation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -21,7 +21,7 @@ import { z } from "zod";
 import Icon from "./Icon";
 
 const zodFormSchema = z.object({
-  note: z.string().refine((val) => ["1", "2", "3", "4", "5"].includes(val), {
+  rating: z.string().refine((val) => ["1", "2", "3", "4", "5"].includes(val), {
     message: "Veuillez sélectionner une note entre 1 et 5.",
   }),
   comment: z.string().min(1, "Le commentaire est requis."),
@@ -30,13 +30,13 @@ type FormSchema = z.infer<typeof zodFormSchema>;
 
 export default function RateDialog({
   id,
-  idStage,
+  offerId,
   defaultValue,
   refetch,
 }: {
   id?: string;
-  idStage: string;
-  defaultValue: { id: string; note: number; comment: string } | null;
+  offerId: string;
+  defaultValue: { id: string; rating: number; comment: string } | null;
   refetch: () => void;
 }) {
   const update = !!defaultValue;
@@ -52,19 +52,19 @@ export default function RateDialog({
   } = useForm<FormSchema>({
     resolver: zodResolver(zodFormSchema),
     defaultValues: {
-      note: defaultValue?.note?.toString() ?? "",
+      rating: defaultValue?.rating?.toString() ?? "",
       comment: defaultValue?.comment ?? "",
     },
   });
 
-  const note = watch("note");
+  const note = watch("rating");
 
   const onSubmit = async (data: FormSchema) => {
     if (update) {
-      const response = await updateEvaluation({
+      const response = await updateRate({
         id: id ? id : "",
-        note: data.note,
-        commentaire: data.comment,
+        rating: data.rating,
+        comment: data.comment,
       });
       if (response.success) {
         setIsOpen(false);
@@ -75,10 +75,10 @@ export default function RateDialog({
         toast.error(response.message);
       }
     } else {
-      const response = await noterEleve({
-        idStage,
-        note: data.note,
-        commentaire: data.comment,
+      const response = await ratingStudent({
+        offerId,
+        rating: data.rating,
+        comment: data.comment,
       });
       if (response.success) {
         setIsOpen(false);
@@ -128,7 +128,7 @@ export default function RateDialog({
                   <RadioGroup
                     value={note}
                     onValueChange={(value) =>
-                      setValue("note", value, { shouldValidate: true })
+                      setValue("rating", value, { shouldValidate: true })
                     }
                     className="flex gap-0 -space-x-px rounded-md shadow-xs"
                   >
@@ -145,9 +145,9 @@ export default function RateDialog({
                       </label>
                     ))}
                   </RadioGroup>
-                  {errors.note && (
+                  {errors.rating && (
                     <span className="mt-1 text-sm text-red-500">
-                      {errors.note.message}
+                      {errors.rating.message}
                     </span>
                   )}
                 </fieldset>

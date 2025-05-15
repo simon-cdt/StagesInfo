@@ -4,30 +4,120 @@ import { db } from "../db";
 import * as argon2 from "argon2";
 import { authOptions } from "../auth";
 
-export const createEntreprise = async ({
-  nom,
-  adresse,
-  email,
-  mdp,
-  contactNom,
-  contactPrenom,
-  contactEmail,
-  secteurs,
+export const getEntrepriseSession = async ({
+  id,
 }: {
-  nom: string;
-  adresse: string;
+  id: string;
+}): Promise<
+  | { success: false; message: string }
+  | {
+      success: true;
+      company: {
+        name: string;
+        address: string;
+        email: string;
+      };
+      sectors: {
+        id: string;
+        label: string;
+        checked: boolean;
+      }[];
+    }
+> => {
+  try {
+    const company = await db.company.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        name: true,
+        address: true,
+        email: true,
+        sectors: {
+          select: {
+            sector: {
+              select: {
+                id: true,
+                label: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!company) {
+      return { success: false, message: "Vous n'êtes pas connecté." };
+    }
+
+    const sectorsDB = await db.sector.findMany({
+      select: { id: true, label: true },
+    });
+
+    const sectors: {
+      id: string;
+      label: string;
+      checked: boolean;
+    }[] = [];
+
+    sectorsDB.forEach((secteur) => {
+      if (
+        company.sectors.some(
+          (companySector) => companySector.sector.id === secteur.id,
+        )
+      ) {
+        sectors.push({
+          id: secteur.id,
+          label: secteur.label,
+          checked: true,
+        });
+      } else {
+        sectors.push({
+          id: secteur.id,
+          label: secteur.label,
+          checked: false,
+        });
+      }
+    });
+
+    return {
+      success: true,
+      company: {
+        name: company.name,
+        address: company.address,
+        email: company.email,
+      },
+      sectors,
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Une erreur est survenue" };
+  }
+};
+
+export const createCompany = async ({
+  name,
+  address,
+  email,
+  password,
+  contactName,
+  contactFirstName,
+  contactEmail,
+  sectors,
+}: {
+  name: string;
+  address: string;
   email: string;
-  mdp: string;
-  contactNom: string;
-  contactPrenom: string;
+  password: string;
+  contactName: string;
+  contactFirstName: string;
   contactEmail: string;
-  secteurs: string[];
+  sectors: string[];
 }): Promise<
   | { success: false; message: string }
   | { success: true; message: "L'entreprise a été crée avec succès" }
 > => {
   try {
-    const entrepriseExiste = await db.entreprise.findUnique({
+    const company = await db.company.findUnique({
       where: {
         email,
       },
@@ -35,28 +125,28 @@ export const createEntreprise = async ({
         id: true,
       },
     });
-    if (entrepriseExiste) {
+    if (company) {
       return { success: false, message: "L'email est déjà utilisé" };
     }
 
-    const mdpHashe = await argon2.hash(mdp);
+    const passwordHash = await argon2.hash(password);
 
-    await db.entreprise.create({
+    await db.company.create({
       data: {
-        nom,
+        name,
         email,
-        mdp: mdpHashe,
-        adresse,
+        password: passwordHash,
+        address,
         contact: {
           create: {
-            nom: contactNom,
-            prenom: contactPrenom,
+            name: contactName,
+            firstName: contactFirstName,
             email: contactEmail,
           },
         },
-        secteurs: {
+        sectors: {
           createMany: {
-            data: secteurs.map((id: string) => ({ idSecteur: id })),
+            data: sectors.map((id: string) => ({ idSector: id })),
           },
         },
       },
@@ -68,106 +158,16 @@ export const createEntreprise = async ({
   }
 };
 
-export const getEntrepriseSession = async ({
-  id,
-}: {
-  id: string;
-}): Promise<
-  | { success: false; message: string }
-  | {
-      success: true;
-      entreprise: {
-        nom: string;
-        adresse: string;
-        email: string;
-      };
-      secteurs: {
-        id: string;
-        label: string;
-        checked: boolean;
-      }[];
-    }
-> => {
-  try {
-    const user = await db.entreprise.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        nom: true,
-        adresse: true,
-        email: true,
-        secteurs: {
-          select: {
-            secteur: {
-              select: {
-                id: true,
-                label: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!user) {
-      return { success: false, message: "Vous n'êtes pas connecté." };
-    }
-
-    const allSecteurs = await db.secteur.findMany({
-      select: { id: true, label: true },
-    });
-
-    const secteurs: {
-      id: string;
-      label: string;
-      checked: boolean;
-    }[] = [];
-
-    allSecteurs.forEach((secteur) => {
-      if (
-        user.secteurs.some(
-          (userSecteur) => userSecteur.secteur.id === secteur.id,
-        )
-      ) {
-        secteurs.push({
-          id: secteur.id,
-          label: secteur.label,
-          checked: true,
-        });
-      } else {
-        secteurs.push({
-          id: secteur.id,
-          label: secteur.label,
-          checked: false,
-        });
-      }
-    });
-
-    return {
-      success: true,
-      entreprise: {
-        nom: user.nom,
-        adresse: user.adresse,
-        email: user.email,
-      },
-      secteurs,
-    };
-  } catch (error) {
-    console.error(error);
-    return { success: false, message: "Une erreur est survenue" };
-  }
-};
-
-export const modifierEntreprise = async ({
-  nom,
+export const updateCompany = async ({
+  name,
   email,
-  adresse,
-  secteurs,
+  address,
+  sectors,
 }: {
-  nom: string;
+  name: string;
   email: string;
-  adresse: string;
-  secteurs: string[];
+  address: string;
+  sectors: string[];
 }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await getServerSession(authOptions);
@@ -177,41 +177,41 @@ export const modifierEntreprise = async ({
         message: "Vous n'êtes pas autorisé à faire cette action",
       };
     }
-    const entreprise = await db.entreprise.findUnique({
+    const company = await db.company.findUnique({
       where: {
         id: session.user.id,
       },
       select: { id: true },
     });
-    if (!entreprise) {
+    if (!company) {
       return {
         success: false,
         message: "Le compte n'existe pas",
       };
     }
 
-    const emailExist = await db.entreprise.findUnique({
+    const emailExist = await db.company.findUnique({
       where: {
         email: email,
       },
       select: { id: true },
     });
-    if (emailExist && emailExist.id !== entreprise.id) {
+    if (emailExist && emailExist.id !== company.id) {
       return { success: false, message: "Cet email est déjà utilisé." };
     }
 
-    await db.entreprise.update({
-      where: { id: entreprise.id },
+    await db.company.update({
+      where: { id: company.id },
       data: {
-        nom,
+        name,
         email,
-        adresse,
-        secteurs: {
+        address,
+        sectors: {
           deleteMany: {
-            idEntreprise: entreprise.id,
+            idCompany: company.id,
           },
           createMany: {
-            data: secteurs.map((id: string) => ({ idSecteur: id })),
+            data: sectors.map((id: string) => ({ idSector: id })),
           },
         },
       },
@@ -224,7 +224,7 @@ export const modifierEntreprise = async ({
   }
 };
 
-export const getEntrepriseContactSession = async ({
+export const getCompanyContactSession = async ({
   id,
 }: {
   id: string;
@@ -233,27 +233,27 @@ export const getEntrepriseContactSession = async ({
   | {
       success: true;
       entrepriseContact: {
-        nom: string;
+        name: string;
         email: string;
-        prenom: string;
+        firstName: string;
       };
     }
 > => {
   try {
-    const entreprise = await db.entreprise.findUnique({
+    const company = await db.company.findUnique({
       where: { id },
       select: {
         contact: {
           select: {
-            nom: true,
-            prenom: true,
+            name: true,
+            firstName: true,
             email: true,
           },
         },
       },
     });
 
-    const contact = entreprise?.contact;
+    const contact = company?.contact;
 
     if (!contact) {
       return { success: false, message: "Le contact n'existe pas" };
@@ -266,13 +266,13 @@ export const getEntrepriseContactSession = async ({
   }
 };
 
-export const modifierContactEntreprise = async ({
-  nom,
-  prenom,
+export const updateCompanyContact = async ({
+  name,
+  firstName,
   email,
 }: {
-  nom: string;
-  prenom: string;
+  name: string;
+  firstName: string;
   email: string;
 }): Promise<{ success: boolean; message: string }> => {
   try {
@@ -280,21 +280,21 @@ export const modifierContactEntreprise = async ({
     if (!session) {
       return { success: false, message: "Vous n'êtes pas connecté." };
     }
-    const entreprise = await db.entreprise.findUnique({
+    const company = await db.company.findUnique({
       where: {
         id: session.user.id,
       },
       select: { contact: { select: { id: true } } },
     });
-    if (!entreprise?.contact?.id) {
+    if (!company?.contact?.id) {
       return { success: false, message: "Le contact n'existe pas" };
     }
 
     await db.contact.update({
-      where: { id: entreprise.contact.id },
+      where: { id: company.contact.id },
       data: {
-        nom,
-        prenom,
+        name,
+        firstName,
         email,
       },
     });
@@ -309,42 +309,42 @@ export const modifierContactEntreprise = async ({
   }
 };
 
-export const modifierOffreStage = async ({
+export const updateOffer = async ({
   id,
-  titre,
+  title,
   description,
-  duree,
-  dateDebut,
-  dateFin,
-  lieu,
-  competences,
-  secteur,
+  duration,
+  startDate,
+  endDate,
+  location,
+  skills,
+  sectorId,
 }: {
   id: string;
-  titre: string;
+  title: string;
   description: string;
-  duree: string;
-  dateDebut: string;
-  dateFin: string;
-  lieu: string;
-  competences: string[];
-  secteur: string;
+  duration: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  skills: string[];
+  sectorId: string;
 }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return { success: false, message: "Vous n'êtes pas connecté." };
     }
-    const stage = await db.stage.findUnique({
+    const offer = await db.offer.findUnique({
       where: {
         id,
       },
-      select: { entrepriseId: true, statut: true },
+      select: { companyId: true, status: true },
     });
     if (
-      !stage ||
-      stage.entrepriseId !== session.user.id ||
-      stage.statut !== "Disponible"
+      !offer ||
+      offer.companyId !== session.user.id ||
+      offer.status !== "Available"
     ) {
       return {
         success: false,
@@ -352,23 +352,23 @@ export const modifierOffreStage = async ({
       };
     }
 
-    const dateDebutDate = new Date(dateDebut);
-    dateDebutDate.setHours(0, 0, 0, 0);
-    const dateFinDate = new Date(dateFin);
-    dateFinDate.setHours(23, 59, 59, 999);
+    const startDateType = new Date(startDate);
+    startDateType.setHours(0, 0, 0, 0);
+    const endDateType = new Date(endDate);
+    endDateType.setHours(23, 59, 59, 999);
 
-    await db.stage.update({
+    await db.offer.update({
       where: { id },
       data: {
-        titre,
+        title,
         description,
-        duree,
-        dateDebut: dateDebutDate,
-        dateFin: dateFinDate,
-        lieu,
-        competences: competences.join(","),
-        secteur: {
-          connect: { id: secteur },
+        duration,
+        startDate: startDateType,
+        endDate: endDateType,
+        location,
+        skills: skills.join(","),
+        sector: {
+          connect: { id: sectorId },
         },
       },
     });
@@ -383,7 +383,7 @@ export const modifierOffreStage = async ({
   }
 };
 
-export const supprimerOffreStage = async ({
+export const deleteOffer = async ({
   id,
 }: {
   id: string;
@@ -393,16 +393,16 @@ export const supprimerOffreStage = async ({
     if (!session) {
       return { success: false, message: "Vous n'êtes pas connecté." };
     }
-    const stage = await db.stage.findUnique({
+    const offer = await db.offer.findUnique({
       where: {
         id,
       },
-      select: { entrepriseId: true, statut: true },
+      select: { companyId: true, status: true },
     });
     if (
-      !stage ||
-      stage.entrepriseId !== session.user.id ||
-      stage.statut !== "Disponible"
+      !offer ||
+      offer.companyId !== session.user.id ||
+      offer.status !== "Available"
     ) {
       return {
         success: false,
@@ -410,7 +410,13 @@ export const supprimerOffreStage = async ({
       };
     }
 
-    await db.stage.delete({
+    await db.submission.deleteMany({
+      where: {
+        offerId: id,
+      },
+    });
+
+    await db.offer.delete({
       where: { id },
     });
 
@@ -424,44 +430,44 @@ export const supprimerOffreStage = async ({
   }
 };
 
-export const creerOffreStage = async ({
-  titre,
+export const createOffer = async ({
+  title,
   description,
-  duree,
-  dateDebut,
-  dateFin,
-  lieu,
-  competences,
-  secteur,
+  duration,
+  startDate,
+  endDate,
+  location,
+  skills,
+  sectorId,
 }: {
-  titre: string;
+  title: string;
   description: string;
-  duree: string;
-  dateDebut: Date;
-  dateFin: Date;
-  lieu: string;
-  competences: string[];
-  secteur: string;
+  duration: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+  skills: string[];
+  sectorId: string;
 }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "entreprise") {
+    if (!session || session.user.role !== "company") {
       return { success: false, message: "Vous n'êtes pas connecté." };
     }
-    dateDebut.setHours(0, 0, 0, 0);
-    dateFin.setHours(23, 59, 59, 999);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
-    await db.stage.create({
+    await db.offer.create({
       data: {
-        titre,
+        title,
         description,
-        duree,
-        dateDebut,
-        dateFin,
-        lieu,
-        competences: competences.join(","),
-        secteurId: secteur,
-        entrepriseId: session.user.id,
+        duration,
+        startDate,
+        endDate,
+        location,
+        skills: skills.join(","),
+        sectorId,
+        companyId: session.user.id,
       },
     });
 

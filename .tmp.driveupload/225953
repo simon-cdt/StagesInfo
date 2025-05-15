@@ -1,0 +1,60 @@
+{
+  "node": {
+    "7f83aceb694db85bc4dd10621d08127491c733f717": {
+      "workers": {
+        "app/admin/entreprises/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/entreprises/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/actions/admin/entreprises/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/entreprises/page": "action-browser"
+      }
+    },
+    "7f33316c75e814d0ecac3c0fb9cca358fceb19c948": {
+      "workers": {
+        "app/admin/entreprises/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/entreprises/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/actions/admin/entreprises/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/entreprises/page": "action-browser"
+      }
+    },
+    "7f05a84b78d4237476ad7751af45f3e67f8f882fd9": {
+      "workers": {
+        "app/admin/entreprises/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/entreprises/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/actions/admin/entreprises/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/entreprises/page": "action-browser"
+      }
+    },
+    "7fb63dc29f13c79081dc54b1998d5ddfad85272f66": {
+      "workers": {
+        "app/admin/entreprises/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/entreprises/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/actions/admin/entreprises/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/entreprises/page": "action-browser"
+      }
+    },
+    "7f500336dd4f30c7c6c7f640f6e78ad7e7bd6c3527": {
+      "workers": {
+        "app/admin/entreprises/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/entreprises/page/actions.js { ACTIONS_MODULE0 => \"[project]/lib/actions/admin/entreprises/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/entreprises/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

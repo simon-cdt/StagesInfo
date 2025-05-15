@@ -1,162 +1,158 @@
-import { CandidatureStatut, StageStatut } from "@prisma/client";
+import { SubmissionStatus, OfferStatus } from "@prisma/client";
 
-export type Role = "etudiant" | "entreprise" | "admin";
+export type Role = "student" | "company" | "admin";
 
-export type FetchSecteursList = [
-  {
-    id: string;
+export type FetchSectorsList = {
+  id: string;
+  label: string;
+  color: string;
+}[];
+
+export type FetchAllOffers = {
+  company: {
+    name: string;
+  };
+  sector: {
     label: string;
-    valeur: string;
-  },
-];
+    color: string;
+  };
+  id: string;
+  title: string;
+  duration: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+}[];
 
-export type FetchStages = [
-  {
+export type FetchOfferDetails = {
+  offer: {
     id: string;
-    titre: string;
-    entreprise: {
-      nom: string;
-    };
-    secteur: {
+    sector: {
       label: string;
-      couleur: string;
+      color: string;
     };
-    duree: string;
-    dateDebut: string;
-    dateFin: string;
-    lieu: string;
-  },
-];
-
-export type FetchStageDetails = {
-  stage: {
-    id: string;
-    secteur: {
-      label: string;
-      couleur: string;
-    };
-    titre: string;
-    statut: StageStatut;
-    lieu: string;
-    duree: string;
-    dateDebut: string;
-    dateFin: string;
+    title: string;
+    status: OfferStatus;
+    location: string;
+    duration: string;
+    startDate: string;
+    endDate: string;
     description: string;
-    competences: string;
-    entreprise: {
-      nom: string;
-      adresse: string;
+    skills: string;
+    company: {
+      name: string;
+      address: string;
       email: string;
       contact: {
-        nom: string;
-        prenom: string;
+        name: string;
         email: string;
+        firstName: string;
       };
     };
   };
-  expiree: boolean;
-  alreadyPosted: boolean;
+  expired: boolean;
+  alreadySubmit: boolean;
 };
 
-export type FetchInfoEtudiant = {
-  nom: string;
-  prenom: string;
+export type FetchStudentInfo = {
+  name: string;
+  firstName: string;
   email: string;
-  cv: Uint8Array<ArrayBufferLike>;
-  competences: string;
+  resume: Uint8Array<ArrayBufferLike>;
+  skills: string;
 };
 
-export type FetchCandidatures = [
+export type FetchStudentSubmissions = [
   {
     id: string;
     date: Date;
-    statut: CandidatureStatut;
-    stage: {
+    status: SubmissionStatus;
+    offer: {
       id: string;
-      titre: string;
-      statut: StageStatut;
-      entreprise: {
-        nom: string;
+      title: string;
+      status: OfferStatus;
+      company: {
+        name: string;
       };
     };
   },
 ];
 
-export type FetchEvaluations = [
+export type FetchStudentEvaluations = [
   {
     id: string;
     evaluation: {
-      note: 4;
+      rating: 4;
       date: Date;
-      commentaire: string;
+      comment: string;
     } | null;
-    titre: string;
-    entreprise: {
-      nom: string;
+    title: string;
+    company: {
+      name: string;
       contact: {
-        nom: string;
-        prenom: string;
+        name: string;
+        firstName: string;
         email: string;
       };
     };
   },
 ];
 
-export type FetchOffresEntreprise = [
+export type FetchCompanyOffers = [
   {
     id: string;
-    titre: string;
+    title: string;
     description: string;
-    secteur: {
+    sector: {
       id: string;
-      couleur: string;
+      color: string;
       label: string;
     };
-    duree: string;
-    dateDebut: Date;
-    dateFin: Date;
-    lieu: string;
-    statut: StageStatut;
-    competences: string;
+    duration: string;
+    startDate: Date;
+    endDate: Date;
+    location: string;
+    status: OfferStatus;
+    skills: string;
   },
 ];
 
-export type FetchCandidaturesRecues = [
+export type FetchCompanyOfferSubmissions = [
   {
     id: string;
-    etudiant: {
+    student: {
       id: string;
-      nom: string;
-      prenom: string;
+      name: string;
+      firstName: string;
       email: string;
-      competences: string;
+      skills: string;
     };
     date: Date;
-    statut: CandidatureStatut;
+    status: SubmissionStatus;
     stage: {
-      statut: StageStatut;
-      dateFin: Date;
+      status: OfferStatus;
+      endDate: Date;
     };
     disable: boolean;
   },
 ];
 
-export type FetchEvaluationEntreprise = [
+export type FetchCompanyOfferEvaluations = [
   {
     id: string;
-    etudiant: {
+    student: {
       id: string;
-      nom: string;
-      prenom: string;
+      name: string;
+      firstName: string;
       email: string;
     };
-    stage: {
+    offer: {
       id: string;
-      titre: string;
+      title: string;
       evaluation: {
         id: string;
-        note: number;
-        commentaire: string;
+        rating: number;
+        comment: string;
         date: Date;
       } | null;
     };

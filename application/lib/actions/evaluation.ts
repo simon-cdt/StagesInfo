@@ -4,22 +4,22 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { db } from "../db";
 
-export const noterEleve = async ({
-  idStage,
-  note,
-  commentaire,
+export const ratingStudent = async ({
+  offerId,
+  rating,
+  comment,
 }: {
-  idStage: string;
-  note: string;
-  commentaire: string;
+  offerId: string;
+  rating: string;
+  comment: string;
 }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await getServerSession(authOptions);
 
-    const stage = await db.stage.findUnique({
-      where: { id: idStage },
+    const offer = await db.offer.findUnique({
+      where: { id: offerId },
       select: {
-        entrepriseId: true,
+        companyId: true,
         evaluation: {
           select: {
             id: true,
@@ -30,10 +30,10 @@ export const noterEleve = async ({
 
     if (
       !session ||
-      session.user.role !== "entreprise" ||
-      !stage ||
-      stage.entrepriseId !== session.user.id ||
-      stage.evaluation?.id !== undefined
+      session.user.role !== "company" ||
+      !offer ||
+      offer.companyId !== session.user.id ||
+      offer.evaluation?.id !== undefined
     ) {
       return {
         success: false,
@@ -41,12 +41,12 @@ export const noterEleve = async ({
       };
     }
 
-    await db.evaluationStage.create({
+    await db.evaluationOffer.create({
       data: {
-        note: parseInt(note),
-        commentaire,
+        rating: parseInt(rating),
+        comment,
         date: new Date(),
-        stageId: idStage,
+        offerId,
       },
     });
 
@@ -63,24 +63,24 @@ export const noterEleve = async ({
   }
 };
 
-export const updateEvaluation = async ({
+export const updateRate = async ({
   id,
-  note,
-  commentaire,
+  rating,
+  comment,
 }: {
   id: string;
-  note: string;
-  commentaire: string;
+  rating: string;
+  comment: string;
 }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await getServerSession(authOptions);
 
-    const evaluation = await db.evaluationStage.findUnique({
+    const rate = await db.evaluationOffer.findUnique({
       where: { id: id },
       select: {
-        stage: {
+        offer: {
           select: {
-            entrepriseId: true,
+            companyId: true,
           },
         },
       },
@@ -88,9 +88,9 @@ export const updateEvaluation = async ({
 
     if (
       !session ||
-      session.user.role !== "entreprise" ||
-      !evaluation ||
-      evaluation.stage.entrepriseId !== session.user.id
+      session.user.role !== "company" ||
+      !rate ||
+      rate.offer.companyId !== session.user.id
     ) {
       return {
         success: false,
@@ -98,11 +98,11 @@ export const updateEvaluation = async ({
       };
     }
 
-    await db.evaluationStage.update({
+    await db.evaluationOffer.update({
       where: { id },
       data: {
-        note: parseInt(note),
-        commentaire,
+        rating: parseInt(rating),
+        comment,
         date: new Date(),
       },
     });
@@ -120,7 +120,7 @@ export const updateEvaluation = async ({
   }
 };
 
-export const deleteEvaluation = async ({
+export const deleteRate = async ({
   id,
 }: {
   id: string;
@@ -128,12 +128,12 @@ export const deleteEvaluation = async ({
   try {
     const session = await getServerSession(authOptions);
 
-    const evaluation = await db.evaluationStage.findUnique({
+    const rate = await db.evaluationOffer.findUnique({
       where: { id: id },
       select: {
-        stage: {
+        offer: {
           select: {
-            entrepriseId: true,
+            companyId: true,
           },
         },
       },
@@ -141,9 +141,9 @@ export const deleteEvaluation = async ({
 
     if (
       !session ||
-      session.user.role !== "entreprise" ||
-      !evaluation ||
-      evaluation.stage.entrepriseId !== session.user.id
+      session.user.role !== "company" ||
+      !rate ||
+      rate.offer.companyId !== session.user.id
     ) {
       return {
         success: false,
@@ -151,7 +151,7 @@ export const deleteEvaluation = async ({
       };
     }
 
-    await db.evaluationStage.delete({
+    await db.evaluationOffer.delete({
       where: { id },
     });
 

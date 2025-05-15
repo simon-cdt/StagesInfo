@@ -25,28 +25,28 @@ export const authOptions: NextAuthOptions = {
           throw new Error("L'email et le mot de passe sont requis");
         }
 
-        const etudiant = await db.etudiant.findUnique({
+        const student = await db.student.findUnique({
           where: { email: credentials?.email },
         });
-        if (etudiant) {
-          if (await argon2.verify(etudiant.mdp, credentials.password)) {
+        if (student) {
+          if (await argon2.verify(student.password, credentials.password)) {
             return {
-              id: etudiant.id,
-              role: "etudiant",
+              id: student.id,
+              role: "student",
             };
           } else {
             throw new Error("Mot de passe incorrect");
           }
         }
 
-        const entreprise = await db.entreprise.findUnique({
+        const company = await db.company.findUnique({
           where: { email: credentials?.email },
         });
-        if (entreprise) {
-          if (await argon2.verify(entreprise.mdp, credentials.password)) {
+        if (company) {
+          if (await argon2.verify(company.password, credentials.password)) {
             return {
-              id: entreprise.id,
-              role: "entreprise",
+              id: company.id,
+              role: "company",
             };
           } else {
             throw new Error("Mot de passe incorrect");
@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials?.email },
         });
         if (admin) {
-          if (await argon2.verify(admin.mdp, credentials.password)) {
+          if (await argon2.verify(admin.password, credentials.password)) {
             return {
               id: admin.id,
               role: "admin",

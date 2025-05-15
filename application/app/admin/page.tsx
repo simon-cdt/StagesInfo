@@ -12,8 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Icon from "@/components/Icon";
-import UpdateEtudiantAdminInformationsForm from "@/components/form/admin/etudiant/updateInformations";
-import UpdateEtudiantAdminPasswordForm from "@/components/form/admin/etudiant/updatePassword";
+import UpdateStudentInformationsAdminForm from "@/components/form/admin/Students/UpdateInformations";
+import UpdateEtudiantAdminPasswordForm from "@/components/form/admin/Students/UpdatePassword";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -26,43 +26,44 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { deleteEtudiant } from "@/lib/actions/admin";
 import { Loader2 } from "lucide-react";
+import CreateStudentAdminForm from "@/components/form/admin/Students/Create";
+import { deleteStudentAdmin } from "@/lib/actions/admin/student";
 
-type FetchEtudiant = [
+export type FetchStudent = [
   {
     id: string;
-    nom: string;
-    prenom: string;
+    name: string;
+    firstName: string;
     email: string;
-    competences: string;
+    skills: string;
     deleteable: boolean;
   },
 ];
 
-function useUsers() {
+function useStudents() {
   return useQuery({
-    queryKey: ["utilisateurs_admin"],
-    queryFn: async (): Promise<FetchEtudiant> => {
-      const response = await fetch(`/api/admin/etudiants`);
+    queryKey: ["students_admin"],
+    queryFn: async (): Promise<FetchStudent> => {
+      const response = await fetch(`/api/admin/students`);
       return await response.json();
     },
   });
 }
 
-export default function AdminEtudiantPage() {
+export default function AdminStudentsPage() {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFetch, setIsLoading] = useState(false);
 
-  const { isError, data: utilisateurs, isFetching, refetch } = useUsers();
+  const { isError, data: students, isLoading, refetch } = useStudents();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
 
-  const filteredUtilisateurs = utilisateurs?.filter((item) => {
+  const filteredStudents = students?.filter((item) => {
     const searchTerm = search.toLowerCase();
     return (
-      item.nom.toLowerCase().includes(searchTerm) ||
-      item.prenom.toLowerCase().includes(searchTerm)
+      item.name.toLowerCase().includes(searchTerm) ||
+      item.firstName.toLowerCase().includes(searchTerm)
     );
   });
   return (
@@ -71,22 +72,21 @@ export default function AdminEtudiantPage() {
         <div className="flex w-full flex-col gap-4">
           <h1 className={"text-3xl font-bold"}>Les étudiants</h1>
           <div className="flex w-full justify-between">
-            {/* <CreateUserForm refetch={refetch} /> */}
+            <CreateStudentAdminForm refetch={refetch} />
             <Input
               type="text"
-              placeholder="Rechercher un utilisateur..."
+              placeholder="Rechercher un étudiant..."
               className="w-[20%] border-black/50"
               onChange={(e) => setSearch(e.target.value)}
               value={search || ""}
             />
           </div>
         </div>
-        {isFetching ? (
+        {isLoading ? (
           <p>Les données sont entrain d&apos;être chargées...</p>
         ) : isError ? (
           <p className="text-red-500">Une erreur est survenue</p>
-        ) : filteredUtilisateurs !== undefined &&
-          filteredUtilisateurs.length > 0 ? (
+        ) : filteredStudents !== undefined && filteredStudents.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
@@ -98,10 +98,10 @@ export default function AdminEtudiantPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUtilisateurs.map((item) => (
+              {filteredStudents.map((item) => (
                 <TableRow key={item.id}>
                   {/* NOM ET PRENOM */}
-                  <TableCell>{`${item.nom} ${item.prenom}`}</TableCell>
+                  <TableCell>{`${item.name} ${item.firstName}`}</TableCell>
 
                   {/* LES INFORMATIONS DE L'UTILISATEUR */}
                   <TableCell>
@@ -113,13 +113,13 @@ export default function AdminEtudiantPage() {
 
                   {/* MODIFIER L'UTILISATEUR */}
                   <TableCell>
-                    <UpdateEtudiantAdminInformationsForm
-                      etudiant={{
+                    <UpdateStudentInformationsAdminForm
+                      student={{
                         id: item.id,
-                        nom: item.nom,
-                        prenom: item.prenom,
+                        name: item.name,
+                        firstName: item.firstName,
                         email: item.email,
-                        competences: item.competences,
+                        skills: item.skills,
                       }}
                       refetch={refetch}
                     />
@@ -161,7 +161,7 @@ export default function AdminEtudiantPage() {
                               className="pointer pointer bg-red-500 text-white hover:bg-red-600 hover:text-white"
                               onClick={async () => {
                                 setIsLoading(true);
-                                const response = await deleteEtudiant({
+                                const response = await deleteStudentAdmin({
                                   id: item.id,
                                 });
                                 if (!response.success) {
@@ -175,9 +175,9 @@ export default function AdminEtudiantPage() {
                                   refetch();
                                 }
                               }}
-                              disabled={isLoading}
+                              disabled={isLoadingFetch}
                             >
-                              {isLoading ? (
+                              {isLoadingFetch ? (
                                 <Loader2 className="animate-spin" />
                               ) : (
                                 "Confirmer"
