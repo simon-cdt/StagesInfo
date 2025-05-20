@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
 import Icon from "@/components/Icon";
-import { updateOffer } from "@/lib/actions/entreprise";
+import { updateOffer } from "@/lib/actions/company";
 
 function useSectors() {
   return useQuery({

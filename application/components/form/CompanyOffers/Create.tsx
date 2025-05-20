@@ -31,7 +31,7 @@ import {
 import toast from "react-hot-toast";
 import DateField from "../DateField";
 import Icon from "@/components/Icon";
-import { createOffer } from "@/lib/actions/entreprise";
+import { createOffer } from "@/lib/actions/company";
 
 function useSectors() {
   return useQuery({
@@ -187,34 +187,35 @@ export default function CompanyOfferCreateForm({
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="sectors">Secteur</Label>
-              <Select onValueChange={(value) => setValue("sectorId", value)}>
-                <SelectTrigger className="pointer">
-                  <SelectValue placeholder="Sélectionne un secteur" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoading && <SelectItem value="">Chargement...</SelectItem>}
-                  {isError && (
-                    <SelectItem value="">Erreur de chargement</SelectItem>
-                  )}
-                  {sectors?.map((sector) => (
-                    <SelectItem
-                      key={sector.id}
-                      value={sector.id}
-                      className="pointer"
-                    >
-                      {sector.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.sectorId && (
-                <small className="text-red-500">
-                  {errors.sectorId.message}
-                </small>
-              )}
-            </div>
+            {!isLoading && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="sectors">Secteur</Label>
+                <Select onValueChange={(value) => setValue("sectorId", value)}>
+                  <SelectTrigger className="pointer">
+                    <SelectValue placeholder="Sélectionne un secteur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {isError && (
+                      <SelectItem value="">Erreur de chargement</SelectItem>
+                    )}
+                    {sectors?.map((sector) => (
+                      <SelectItem
+                        key={sector.id}
+                        value={sector.id}
+                        className="pointer"
+                      >
+                        {sector.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.sectorId && (
+                  <small className="text-red-500">
+                    {errors.sectorId.message}
+                  </small>
+                )}
+              </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
@@ -284,7 +285,7 @@ export default function CompanyOfferCreateForm({
               disabled={isSubmitting}
               variant={isSubmitting ? "disable" : "default"}
             >
-              {isSubmitting ? <Loader2 className="animate-spin" /> : "Ajouter"}
+              {isSubmitting ? <Loader2 className="animate-spin" /> : "Créer"}
             </Button>
           </DialogFooter>
         </form>

@@ -18,6 +18,7 @@ export async function GET() {
       },
       sector: {
         select: {
+          id: true,
           label: true,
           color: true,
         },
@@ -26,6 +27,7 @@ export async function GET() {
       startDate: true,
       endDate: true,
       location: true,
+      skills: true,
     },
     orderBy: {
       startDate: "asc",

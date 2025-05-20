@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -12,19 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Icon from "@/components/Icon";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -41,7 +29,7 @@ import { fr } from "date-fns/locale";
 import { colorMap } from "@/types/types";
 import UpdateOfferAdminForm from "@/components/form/admin/Offers/Update";
 import CreateOfferAdminForm from "@/components/form/admin/Offers/Create";
-import { deleteOfferAdmin } from "@/lib/actions/admin/offer";
+import DeleteOfferAdmin from "@/components/delete/DeleteOfferAdmin";
 
 export type FetchOffers = [
   {
@@ -79,9 +67,6 @@ function useOffers() {
 }
 
 export default function OffresAdminPage() {
-  const [open, setOpen] = useState(false);
-  const [isLoadingFetch, setIsLoading] = useState(false);
-
   const { isError, data: offers, isLoading, refetch } = useOffers();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
@@ -140,14 +125,14 @@ export default function OffresAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredOffers.map((offre) => {
-                const color = colorMap[offre.sector.color] || colorMap.blue;
+              {filteredOffers.map((offer) => {
+                const color = colorMap[offer.sector.color] || colorMap.blue;
                 return (
-                  <TableRow key={offre.id}>
-                    <TableCell>{`${offre.title}`}</TableCell>
+                  <TableRow key={offer.id}>
+                    <TableCell>{`${offer.title}`}</TableCell>
 
                     <TableCell>
-                      <p>{offre.company.name}</p>
+                      <p>{offer.company.name}</p>
                     </TableCell>
 
                     <TableCell>
@@ -170,10 +155,10 @@ export default function OffresAdminPage() {
                             <Badge
                               className={`${color.border} ${color.bg} ${color.text}`}
                             >
-                              {offre.sector.label}
+                              {offer.sector.label}
                             </Badge>
                             <div className="flex flex-wrap gap-2">
-                              {offre.skills.split(",").map((skill, index) => {
+                              {offer.skills.split(",").map((skill, index) => {
                                 return (
                                   <Badge
                                     className="border-gray-500 bg-transparent text-gray-700"
@@ -195,7 +180,7 @@ export default function OffresAdminPage() {
                               }
                               value={
                                 <p className="whitespace-pre-line">
-                                  {offre.description}
+                                  {offer.description}
                                 </p>
                               }
                             />
@@ -210,11 +195,11 @@ export default function OffresAdminPage() {
                               }
                               value={
                                 <p>
-                                  {format(offre.startDate, "PPP", {
+                                  {format(offer.startDate, "PPP", {
                                     locale: fr,
                                   }) +
                                     " - " +
-                                    format(offre.endDate, "PPP", {
+                                    format(offer.endDate, "PPP", {
                                       locale: fr,
                                     })}
                                 </p>
@@ -227,7 +212,7 @@ export default function OffresAdminPage() {
                                   <p className="text-lg font-semibold">Lieu</p>
                                 </div>
                               }
-                              value={<p>{offre.location}</p>}
+                              value={<p>{offer.location}</p>}
                             />
                           </div>
                           <DialogFooter className="sm:justify-start">
@@ -244,89 +229,39 @@ export default function OffresAdminPage() {
                     <TableCell>
                       <Badge
                         className={getStatusBadgeClass(
-                          offre.expired ? "Expired" : offre.status,
+                          offer.expired ? "Expired" : offer.status,
                         )}
                       >
-                        {offre.expired
+                        {offer.expired
                           ? "Expirée"
-                          : offre.status === "Available"
+                          : offer.status === "Available"
                             ? "Disponible"
-                            : offre.status === "Completed" && "Pourvue"}
+                            : offer.status === "Completed" && "Pourvue"}
                       </Badge>
                     </TableCell>
 
                     <TableCell>
                       <UpdateOfferAdminForm
-                        id={offre.id}
-                        title={offre.title}
-                        description={offre.description}
-                        duration={offre.duration}
-                        startDate={offre.startDate}
-                        endDate={offre.endDate}
-                        location={offre.location}
-                        skills={offre.skills}
-                        disabled={!offre.deleteable}
-                        sectorId={offre.sector.id}
+                        id={offer.id}
+                        title={offer.title}
+                        description={offer.description}
+                        duration={offer.duration}
+                        startDate={offer.startDate}
+                        endDate={offer.endDate}
+                        location={offer.location}
+                        skills={offer.skills}
+                        disabled={!offer.deleteable}
+                        sectorId={offer.sector.id}
                         refetch={refetch}
                       />
                     </TableCell>
 
                     <TableCell>
-                      {offre.deleteable ? (
-                        <AlertDialog open={open} onOpenChange={setOpen}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant={"destructive"}>
-                              <div className="flex items-center gap-1">
-                                <Icon src="trash" />
-                                <p>Supprimer</p>
-                              </div>
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Êtes-vous vraiment sûr de supprimer l&apos;offre
-                                de stage ?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action est irréversible. Vous ne pourrez
-                                pas récupérer l&apos;offre de stage une fois
-                                supprimée.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="pointer">
-                                Annuler
-                              </AlertDialogCancel>
-                              <Button
-                                className="pointer pointer bg-red-500 text-white hover:bg-red-600 hover:text-white"
-                                onClick={async () => {
-                                  setIsLoading(true);
-                                  const response = await deleteOfferAdmin({
-                                    id: offre.id,
-                                  });
-                                  if (!response.success) {
-                                    setOpen(false);
-                                    setIsLoading(false);
-                                    toast.error(response.message);
-                                  } else {
-                                    setOpen(false);
-                                    setIsLoading(false);
-                                    toast.success(response.message);
-                                    refetch();
-                                  }
-                                }}
-                                disabled={isLoadingFetch}
-                              >
-                                {isLoadingFetch ? (
-                                  <Loader2 className="animate-spin" />
-                                ) : (
-                                  "Confirmer"
-                                )}
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                      {offer.deleteable ? (
+                        <DeleteOfferAdmin
+                          offerId={offer.id}
+                          refetch={refetch}
+                        />
                       ) : (
                         <Button variant={"disable"} disabled>
                           <div className="flex items-center gap-1">

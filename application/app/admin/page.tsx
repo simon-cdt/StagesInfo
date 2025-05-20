@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -14,21 +14,9 @@ import {
 import Icon from "@/components/Icon";
 import UpdateStudentInformationsAdminForm from "@/components/form/admin/Students/UpdateInformations";
 import UpdateEtudiantAdminPasswordForm from "@/components/form/admin/Students/UpdatePassword";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import CreateStudentAdminForm from "@/components/form/admin/Students/Create";
-import { deleteStudentAdmin } from "@/lib/actions/admin/student";
+import DeleteStudentAdmin from "@/components/delete/DeleteStudentAdmin";
 
 export type FetchStudent = [
   {
@@ -52,9 +40,6 @@ function useStudents() {
 }
 
 export default function AdminStudentsPage() {
-  const [open, setOpen] = useState(false);
-  const [isLoadingFetch, setIsLoading] = useState(false);
-
   const { isError, data: students, isLoading, refetch } = useStudents();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
@@ -133,59 +118,7 @@ export default function AdminStudentsPage() {
                   {/* SUPPRIMER L'UTILISATEUR */}
                   <TableCell>
                     {item.deleteable ? (
-                      <AlertDialog open={open} onOpenChange={setOpen}>
-                        <AlertDialogTrigger asChild>
-                          <Button variant={"destructive"}>
-                            <div className="flex items-center gap-1">
-                              <Icon src="trash" />
-                              <p>Supprimer</p>
-                            </div>
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Êtes-vous vraiment sûr de supprimer
-                              l&apos;étudiant ?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action est irréversible, l&apos;étudiant
-                              devra se refaire un compte.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="pointer">
-                              Annuler
-                            </AlertDialogCancel>
-                            <Button
-                              className="pointer pointer bg-red-500 text-white hover:bg-red-600 hover:text-white"
-                              onClick={async () => {
-                                setIsLoading(true);
-                                const response = await deleteStudentAdmin({
-                                  id: item.id,
-                                });
-                                if (!response.success) {
-                                  setOpen(false);
-                                  setIsLoading(false);
-                                  toast.error(response.message);
-                                } else {
-                                  setOpen(false);
-                                  setIsLoading(false);
-                                  toast.success(response.message);
-                                  refetch();
-                                }
-                              }}
-                              disabled={isLoadingFetch}
-                            >
-                              {isLoadingFetch ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                "Confirmer"
-                              )}
-                            </Button>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <DeleteStudentAdmin id={item.id} refetch={refetch} />
                     ) : (
                       <Button variant={"disable"} disabled>
                         <div className="flex items-center gap-1">

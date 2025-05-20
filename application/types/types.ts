@@ -13,6 +13,7 @@ export type FetchAllOffers = {
     name: string;
   };
   sector: {
+    id: string;
     label: string;
     color: string;
   };
@@ -22,6 +23,7 @@ export type FetchAllOffers = {
   startDate: Date;
   endDate: Date;
   location: string;
+  skills: string;
 }[];
 
 export type FetchOfferDetails = {

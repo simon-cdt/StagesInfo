@@ -264,7 +264,7 @@ export default function CreateStudentAdminForm({
                 {isSubmitting ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  "Créer mon compte"
+                  "Créer le compte"
                 )}
               </Button>
             </div>

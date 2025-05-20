@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { parseAsString, useQueryState } from "nuqs";
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -12,31 +12,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Icon from "@/components/Icon";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SubmissionStatus } from "@prisma/client";
 import Link from "next/link";
 import UpdateSubmissionAdminForm from "@/components/form/admin/Submissions/Update";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  acceptSubmissionAdmin,
-  deleteSubmissionAdmin,
-  rejectSubmissionAdmin,
-} from "@/lib/actions/admin/submission";
 import CreateSubmissionAdmin from "@/components/form/admin/Submissions/Create";
+import DeleteSubmissionAdmin from "@/components/delete/DeleteSubmissionAdmin";
+import RejectAdmin from "@/components/submission/RejectAdmin";
+import AcceptAdmin from "@/components/submission/AcceptAdmin";
 
 type FetchSubmissions = [
   {
@@ -72,9 +57,6 @@ function useSubmissions() {
 }
 
 export default function SubmisssionsAdminPage() {
-  const [open, setOpen] = useState(false);
-  const [isLoadingFetch, setIsLoading] = useState(false);
-
   const { isError, data: submissions, isLoading, refetch } = useSubmissions();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
@@ -111,26 +93,6 @@ export default function SubmisssionsAdminPage() {
         return "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100";
-    }
-  };
-
-  const handleRejectSubmission = async ({ id }: { id: string }) => {
-    const response = await rejectSubmissionAdmin({ id });
-    if (response.success) {
-      toast.success(response.message);
-      refetch();
-    } else {
-      toast.error(response.message);
-    }
-  };
-
-  const handleAcceptSubmission = async ({ id }: { id: string }) => {
-    const response = await acceptSubmissionAdmin({ id });
-    if (response.success) {
-      toast.success(response.message);
-      refetch();
-    } else {
-      toast.error(response.message);
     }
   };
 
@@ -246,60 +208,10 @@ export default function SubmisssionsAdminPage() {
 
                     <TableCell>
                       {submission.deleteable ? (
-                        <AlertDialog open={open} onOpenChange={setOpen}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant={"destructive"}>
-                              <div className="flex items-center gap-1">
-                                <Icon src="trash" />
-                                <p>Supprimer</p>
-                              </div>
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Êtes-vous vraiment sûr de supprimer l&apos;offre
-                                de stage ?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action est irréversible. Vous ne pourrez
-                                pas récupérer l&apos;offre de stage une fois
-                                supprimée.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="pointer">
-                                Annuler
-                              </AlertDialogCancel>
-                              <Button
-                                className="pointer pointer bg-red-500 text-white hover:bg-red-600 hover:text-white"
-                                onClick={async () => {
-                                  setIsLoading(true);
-                                  const response = await deleteSubmissionAdmin({
-                                    id: submission.id,
-                                  });
-                                  if (!response.success) {
-                                    setOpen(false);
-                                    setIsLoading(false);
-                                    toast.error(response.message);
-                                  } else {
-                                    setOpen(false);
-                                    setIsLoading(false);
-                                    toast.success(response.message);
-                                    refetch();
-                                  }
-                                }}
-                                disabled={isLoadingFetch}
-                              >
-                                {isLoadingFetch ? (
-                                  <Loader2 className="animate-spin" />
-                                ) : (
-                                  "Confirmer"
-                                )}
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <DeleteSubmissionAdmin
+                          id={submission.id}
+                          refetch={refetch}
+                        />
                       ) : (
                         <Button variant={"disable"} disabled>
                           <div className="flex items-center gap-1">
@@ -317,78 +229,8 @@ export default function SubmisssionsAdminPage() {
                         </Button>
                       ) : (
                         <div className="flex items-center justify-end gap-4">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size={"icon"}
-                                className="bg-transparent shadow-none hover:bg-red-200"
-                              >
-                                <Icon src="xmark-red" className="w-6" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Êtes-vous sûr de vouloir refuser cette
-                                  candidature ?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Cette action ne peut pas être annulée. Vous ne
-                                  pourrez pas récupérer la candidature une fois
-                                  refusée.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    handleRejectSubmission({
-                                      id: submission.id,
-                                    })
-                                  }
-                                  className="bg-red-500 text-white hover:bg-red-600"
-                                >
-                                  Confirmer
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size={"icon"}
-                                className="bg-transparent shadow-none hover:bg-emerald-200"
-                              >
-                                <Icon src="check-green" className="w-6" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Êtes-vous sûr de vouloir accepter cette
-                                  candidature ?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Cette action ne peut pas être annulée. Vous ne
-                                  pourrez pas récupérer la candidature une fois
-                                  acceptée.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction
-                                  className="bg-emerald-500 text-white hover:bg-emerald-600"
-                                  onClick={() =>
-                                    handleAcceptSubmission({
-                                      id: submission.id,
-                                    })
-                                  }
-                                >
-                                  Confirmer
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <RejectAdmin id={submission.id} refetch={refetch} />
+                          <AcceptAdmin id={submission.id} refetch={refetch} />
                         </div>
                       )}
                     </TableCell>

@@ -7,17 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -28,9 +17,9 @@ import { FetchCompanyOfferSubmissions } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import toast from "react-hot-toast";
-import { acceptSubmission, rejectSubmission } from "@/lib/actions/submission";
 import Icon from "../Icon";
+import AcceptCompany from "../submission/AcceptCompany";
+import RejectCompany from "../submission/RejectCompany";
 
 function useSubmissions({ id }: { id: string }) {
   return useQuery({
@@ -89,30 +78,10 @@ export default function CompanyOfferSubmissions({ id }: { id: string }) {
     }
   };
 
-  const handleRejectSubmission = async ({ id }: { id: string }) => {
-    const response = await rejectSubmission({ id });
-    if (response.success) {
-      toast.success(response.message);
-      refetch();
-    } else {
-      toast.error(response.message);
-    }
-  };
-
-  const handleAcceptSubmission = async ({ id }: { id: string }) => {
-    const response = await acceptSubmission({ id });
-    if (response.success) {
-      toast.success(response.message);
-      refetch();
-    } else {
-      toast.error(response.message);
-    }
-  };
-
   return (
     <div className="flex w-full flex-col items-center pt-10">
       <div className="flex w-[90%] flex-col gap-7">
-        <Link href={"/entreprise"}>
+        <Link href={"/company"}>
           <Button variant={"outline"} className="flex items-center gap-2">
             <Icon src="nav-arrow-left" />
             <p>Retour</p>
@@ -225,77 +194,8 @@ export default function CompanyOfferSubmissions({ id }: { id: string }) {
                         </Button>
                       ) : (
                         <div className="flex items-center justify-end gap-4">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size={"icon"}
-                                className="bg-transparent shadow-none hover:bg-red-200"
-                              >
-                                <Icon src="xmark-red" className="w-6" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Êtes-vous sûr de vouloir refuser cette
-                                  candidature ?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Cette action ne peut pas être annulée. Vous
-                                  pouvez toujours accepter la candidature plus
-                                  tard.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    handleRejectSubmission({
-                                      id: submission.id,
-                                    })
-                                  }
-                                  className="bg-red-500 text-white hover:bg-red-600"
-                                >
-                                  Confirmer
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size={"icon"}
-                                className="bg-transparent shadow-none hover:bg-emerald-200"
-                              >
-                                <Icon src="check-green" className="w-6" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Êtes-vous sûr de vouloir accepter cette
-                                  candidature ?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Cette action ne peut pas être annulée. Toutes
-                                  les autres candidatures seront refusées.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction
-                                  className="bg-emerald-500 text-white hover:bg-emerald-600"
-                                  onClick={() =>
-                                    handleAcceptSubmission({
-                                      id: submission.id,
-                                    })
-                                  }
-                                >
-                                  Confirmer
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <RejectCompany id={submission.id} refetch={refetch} />
+                          <AcceptCompany id={submission.id} refetch={refetch} />
                         </div>
                       )}
                     </TableCell>

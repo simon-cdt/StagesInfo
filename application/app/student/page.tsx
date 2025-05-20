@@ -234,7 +234,7 @@ export default function StudentSubmissionsPage() {
               </p>
             ) : (
               <>
-                <p>Vous n&apos;avez encore aucune candidatures,&nbsp;</p>
+                <p>Vous n&apos;avez encore aucune candidature,&nbsp;</p>
                 <Link href={"/"} className="font-semibold underline">
                   cliquez ici pour aller en faire.
                 </Link>

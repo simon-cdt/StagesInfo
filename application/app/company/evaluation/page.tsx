@@ -7,18 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
@@ -39,9 +29,7 @@ import {
 import RateDialog from "@/components/RateDialog";
 import { Separator } from "@/components/ui/separator";
 import Icon from "@/components/Icon";
-import { deleteRate } from "@/lib/actions/evaluation";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import DeleteEvaluationCompany from "@/components/delete/DeleteEvaluationCompany";
 
 function useEvaluations() {
   return useQuery({
@@ -54,9 +42,6 @@ function useEvaluations() {
 }
 
 export default function OffreStageScreen() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const {
     isError,
     data: evaluations,
@@ -89,21 +74,6 @@ export default function OffreStageScreen() {
       if (tabs === "Pas encore noté") return item.offer.evaluation === null;
       return true;
     });
-
-  const handleSupprimerEvaluation = async ({ id }: { id: string }) => {
-    setIsLoading(true);
-    const response = await deleteRate({ id });
-    if (response.success) {
-      setIsLoading(false);
-      setIsOpen(false);
-      toast.success(response.message);
-      refetch();
-    } else {
-      setIsLoading(false);
-      setIsOpen(false);
-      toast.error(response.message);
-    }
-  };
 
   return (
     <div className="flex w-full flex-col items-center pt-10">
@@ -227,47 +197,10 @@ export default function OffreStageScreen() {
                     </TableCell>
                     <TableCell>
                       {evaluation.offer.evaluation ? (
-                        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive">
-                              Supprimer l&apos;évaluation de stage
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Êtes vous certain de vouloir faire cette action
-                                ?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action est irréversible. Vous ne pourrez
-                                pas récupérer l&apos;évaluation de stage.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <Button
-                                className="best-transition bg-red-500 text-white hover:bg-red-600"
-                                onClick={() =>
-                                  handleSupprimerEvaluation({
-                                    id: evaluation.offer.evaluation?.id || "",
-                                  })
-                                }
-                                variant={"destructive"}
-                                type="button"
-                                disabled={isLoading}
-                              >
-                                {isLoading ? (
-                                  <div className="flex items-center gap-2">
-                                    <Loader2 className="animate-spin" />
-                                  </div>
-                                ) : (
-                                  "Supprimer l'évaluation de stage"
-                                )}
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <DeleteEvaluationCompany
+                          id={evaluation.offer.evaluation.id}
+                          refetch={refetch}
+                        />
                       ) : (
                         <Button variant={"disable"} disabled>
                           Supprimer l&apos;offre de stage

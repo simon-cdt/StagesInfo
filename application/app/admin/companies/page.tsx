@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -12,19 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Icon from "@/components/Icon";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -39,8 +27,8 @@ import { Separator } from "@/components/ui/separator";
 import UpdateCompanyInformationsAdminForm from "@/components/form/admin/Companies/UpdateInformations";
 import UpdateCompanyContactInformationsAdminForm from "@/components/form/admin/Companies/UpdateContactInformations";
 import UpdateCompanyPasswordAdminForm from "@/components/form/admin/Companies/UpdatePassword";
-import { deleteCompanyAdmin } from "@/lib/actions/admin/company";
 import CreateCompanyAdminForm from "@/components/form/admin/Companies/Create";
+import DeleteCompanyAdmin from "@/components/delete/DeleteCompanyAdmin";
 
 type FetchCompany = [
   {
@@ -78,9 +66,6 @@ function useCompany() {
 }
 
 export default function EntreprisesAdminPage() {
-  const [open, setOpen] = useState(false);
-  const [isLoadingFetch, setIsLoading] = useState(false);
-
   const { isError, data: companies, isLoading, refetch } = useCompany();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
@@ -137,7 +122,7 @@ export default function EntreprisesAdminPage() {
                     </p>
                     <div className="flex items-center gap-1">
                       <Icon src="mail" />
-                      <p>{entreprise.email}</p>
+                      <p>{entreprise.contact.email}</p>
                     </div>
                   </TableCell>
 
@@ -273,59 +258,10 @@ export default function EntreprisesAdminPage() {
                   {/* SUPPRIMER L'UTILISATEUR */}
                   <TableCell>
                     {entreprise.deleteable ? (
-                      <AlertDialog open={open} onOpenChange={setOpen}>
-                        <AlertDialogTrigger asChild>
-                          <Button variant={"destructive"}>
-                            <div className="flex items-center gap-1">
-                              <Icon src="trash" />
-                              <p>Supprimer</p>
-                            </div>
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Êtes-vous vraiment sûr de supprimer
-                              l&apos;entreprise ?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Cette action est irréversible, l&apos;entreprise
-                              devra se refaire un compte.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="pointer">
-                              Annuler
-                            </AlertDialogCancel>
-                            <Button
-                              className="pointer pointer bg-red-500 text-white hover:bg-red-600 hover:text-white"
-                              onClick={async () => {
-                                setIsLoading(true);
-                                const response = await deleteCompanyAdmin({
-                                  id: entreprise.id,
-                                });
-                                if (!response.success) {
-                                  setOpen(false);
-                                  setIsLoading(false);
-                                  toast.error(response.message);
-                                } else {
-                                  setOpen(false);
-                                  setIsLoading(false);
-                                  toast.success(response.message);
-                                  refetch();
-                                }
-                              }}
-                              disabled={isLoadingFetch}
-                            >
-                              {isLoadingFetch ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                "Confirmer"
-                              )}
-                            </Button>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <DeleteCompanyAdmin
+                        id={entreprise.id}
+                        refetch={refetch}
+                      />
                     ) : (
                       <Button variant={"disable"} disabled>
                         <div className="flex items-center gap-1">

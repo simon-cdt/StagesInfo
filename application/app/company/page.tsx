@@ -7,18 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
@@ -38,11 +28,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import UpdateCompanyOfferForm from "@/components/form/CompanyOffers/Update";
-import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import CompanyOfferCreateForm from "@/components/form/CompanyOffers/Create";
 import Icon from "@/components/Icon";
-import { deleteOffer } from "@/lib/actions/entreprise";
+import DeleteOfferCompany from "@/components/delete/DeleteOfferCompany";
 
 function useOffers() {
   return useQuery({
@@ -55,9 +43,6 @@ function useOffers() {
 }
 
 export default function OffreStageScreen() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const {
     isError,
     data: offers,
@@ -98,21 +83,6 @@ export default function OffreStageScreen() {
         return "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100";
-    }
-  };
-
-  const handleSupprimerOffreStage = async ({ id }: { id: string }) => {
-    setIsLoading(true);
-    const response = await deleteOffer({ id });
-    if (response.success) {
-      setIsLoading(false);
-      setIsOpen(false);
-      toast.success(response.message);
-      refetch();
-    } else {
-      setIsLoading(false);
-      setIsOpen(false);
-      toast.error(response.message);
     }
   };
 
@@ -293,47 +263,7 @@ export default function OffreStageScreen() {
                     </TableCell>
                     <TableCell className="text-right">
                       {offer.status === "Available" ? (
-                        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive">
-                              <div className="flex items-center gap-2">
-                                <Icon src="trash" className="w-4" />
-                                <p>Supprimer</p>
-                              </div>
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Êtes vous certain de vouloir faire cette action
-                                ?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action est irréversible. L&apos;entreprise
-                                ne pourra plus voir votre candidature.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <Button
-                                className="best-transition bg-red-500 text-white hover:bg-red-600"
-                                onClick={() =>
-                                  handleSupprimerOffreStage({
-                                    id: offer.id,
-                                  })
-                                }
-                                disabled={isLoading}
-                                variant={isLoading ? "disable" : "destructive"}
-                              >
-                                {isLoading ? (
-                                  <Loader2 className="animate-spin" />
-                                ) : (
-                                  "Confirmer"
-                                )}
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <DeleteOfferCompany id={offer.id} refetch={refetch} />
                       ) : (
                         <Button variant={"disable"} disabled>
                           <div className="flex items-center gap-2">
